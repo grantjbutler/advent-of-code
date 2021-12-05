@@ -1,0 +1,14 @@
+{
+    "name": "grantbutler/advent-of-code",
+    "type": "project",
+    "require": {
+        "illuminate/collections": "^8.74",
+        "illuminate/console": "^8.74"
+    },
+    "authors": [
+        {
+            "name": "Grant Butler",
+            "email": "grantjbutler@users.noreply.github.com"
+        }
+    ]
+}
