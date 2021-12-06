@@ -4,6 +4,7 @@ namespace AOC2021\Day6;
 
 use AOC\Day;
 use AOC\Input;
+use Ds\Map;
 
 class Day6 extends Day {
     public function part1(Input $input) {
@@ -15,34 +16,33 @@ class Day6 extends Day {
     }
 
     private function runSimulation(Input $input, int $days) {
-        $fish = collect(
+        $fishAges = collect(
             explode(',', $input->lines->first())
         )
         ->map(fn ($num) => (int)$num)
-        ->mapInto(Lanterfish::class);
-
+        ->countBy()
+        ->reduce(function ($ages, $item, $key) {
+            $ages->put($key, $item);
+            return $ages;
+        }, new Map());
+        
         return collect()->range(1, $days)
-            ->reduce(function($fish, $day) {
-                return $fish->flatMap(fn ($fish) => $fish->age());
-            }, $fish)
-            ->count();
-    }
-}
+            ->reduce(function($ages, $day) {
+                return $ages->reduce(function($newAges, $key, $value) {
+                    if ($key == 0) {
+                        $newAges->put(8, $newAges->get(8, 0) + $value);
+                        $newAges->put(6, $newAges->get(6, 0) + $value);
+                        return $newAges;
+                    }
 
-class Lanterfish {
-    public int $age;
+                    $newAge = ($key - 1);
+                    $newAges->put($newAge, $newAges->get($newAge, 0) + $value);
 
-    public function __construct(int $age) {
-        $this->age = $age;
-    }
-
-    public function age() {
-        if ($this->age == 0) {
-            $this->age = 6;
-            return collect([$this, new Lanterfish(8)]);
-        }
-
-        $this->age -= 1;
-        return collect([$this]);
+                    return $newAges;
+                }, new Map());
+            }, $fishAges)
+            ->reduce(function($totals, $key, $value) {
+                return $totals + $value;
+            }, 0);
     }
 }
