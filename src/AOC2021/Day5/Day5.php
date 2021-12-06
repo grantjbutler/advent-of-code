@@ -36,10 +36,7 @@ class Day5 extends Day {
 
     private function countDangerZones($lines) {
         return $lines->reduce(function($totals, $line) {
-            $distance = $line->start->distanceTo($line->end);
-            return collect()->range($line->start->x, $line->end->x)->pad($distance->y, $line->start->x)
-                ->zip(collect()->range($line->start->y, $line->end->y)->pad($distance->x, $line->start->y))
-                ->mapSpread(fn ($x, $y) => new Point($x, $y))
+            return $line->points()
                 ->reduce(function($totals, $point) {
                     $totals->put((string)$point, $totals->get((string)$point, 0) + 1);
                     return $totals;
