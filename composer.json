@@ -3,12 +3,28 @@
     "type": "project",
     "require": {
         "illuminate/collections": "^8.74",
-        "illuminate/console": "^8.74"
+        "illuminate/console": "^8.74",
+        "illuminate/container": "^8.74",
+        "illuminate/events": "^8.74",
+        "symfony/debug": "^4.4",
+        "symfony/finder": "^5.4",
+        "symfony/var-dumper": "^5.4",
+        "nikic/php-parser": "^4.13",
+        "symfony/filesystem": "^5.4",
+        "php-ds/php-ds": "^1.4"
     },
     "authors": [
         {
             "name": "Grant Butler",
             "email": "grantjbutler@users.noreply.github.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "AOC\\": "src/AOC",
+            "AOC2021\\": "src/AOC2021",
+            "AOC2020\\": "src/AOC2020"
+        },
+        "files": ["src/AOC/helpers.php"]
+    }
 }
