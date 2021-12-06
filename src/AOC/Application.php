@@ -5,7 +5,7 @@ namespace AOC;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Stringable;
 
 class Application extends Container {
     protected string $basePath;
@@ -36,15 +36,17 @@ class Application extends Container {
         Collection::macro('asIntegers', function() {
             /** @var Illuminate\Support\Collection $this */
             return $this->map(function ($item) {
+                if ($item instanceof Stringable) {
+                    return (int)$item->__toString();
+                }
+                
                 return (int)$item;
             });
         });
 
         Collection::macro('characters', function() {
             /** @var Illuminate\Support\Collection $this */
-            return $this->map(function ($item) {
-                return collect(str_split($item));
-            });
+            return $this->map(fn ($item) => $item->split(1));
         });
 
         Collection::macro('maxKey', function() {

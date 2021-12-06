@@ -48,7 +48,7 @@ class Day4 extends Day {
 
     public function processInput(Input $input) {
         $lines = $input->lines;
-        $numbers = collect(explode(',', $lines->shift()));
+        $numbers = $lines->shift()->explode(',')->asIntegers();
 
         $boards = $lines->chunk(6)
             ->map(function($rows) {

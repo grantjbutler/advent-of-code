@@ -16,9 +16,7 @@ class Day6 extends Day {
     }
 
     private function runSimulation(Input $input, int $days) {
-        $fishAges = collect(
-            explode(',', $input->lines->first())
-        )
+        $fishAges = $input->explode(',')
         ->map(fn ($num) => (int)$num)
         ->countBy()
         ->reduce(function ($ages, $item, $key) {
