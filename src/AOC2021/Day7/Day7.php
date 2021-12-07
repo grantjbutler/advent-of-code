@@ -9,7 +9,7 @@ use Ds\Map;
 class Day7 extends Day {
     public function part1(Input $input) {
         $positions = $input->explode(',')
-            ->map(fn ($num) => (int)$num);
+            ->asIntegers();
 
         $idealPosition = $positions->median();
         
@@ -20,7 +20,7 @@ class Day7 extends Day {
 
     public function part2(Input $input) {
         $positions = $input->explode(',')
-            ->map(fn ($num) => (int)$num);
+            ->asIntegers();
         
         return collect()
             ->range($positions->min(), $positions->max())
