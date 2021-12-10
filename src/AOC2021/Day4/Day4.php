@@ -54,8 +54,8 @@ class Day4 extends Day {
             ->map(function($rows) {
                 return $rows->skip(1)
                     ->flatMap(function($row) {
-                        preg_match_all('/\d+/', $row, $matches);
-                        return collect($matches[0])->map(fn ($num) => (int)$num);
+                        return $row->matchAll('/\d+/')
+                            ->map(fn ($num) => (int)$num);
                     });
             })
             ->mapInto(BingoBoard::class);

@@ -9,7 +9,7 @@ class Day9 extends Day {
     public function part1(Input $input) {
         $map = $input->lines
             ->flatMap(function($line) {
-                return $line->split(1)
+                return $line->characters()
                     ->asIntegers();
             });
         
@@ -23,7 +23,7 @@ class Day9 extends Day {
     public function part2(Input $input) {
         $map = $input->lines
             ->flatMap(function($line) {
-                return $line->split(1)
+                return $line->characters()
                     ->asIntegers();
             });
         

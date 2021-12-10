@@ -6,7 +6,7 @@ use AOC\Day;
 use AOC\Input;
 use AOC\Geometry\Line;
 use AOC\Geometry\Point;
-use Ds\Map;
+// use Ds\Map;
 
 class Day5 extends Day {
     public function part1(Input $input) {
@@ -24,8 +24,8 @@ class Day5 extends Day {
     private function processInput(Input $input, bool $allowDiagonals) {
         return $input->lines
             ->map(function($line) {
-                preg_match('/(?<x1>[0-9]+),(?<y1>[0-9]+)\s->\s(?<x2>[0-9]+),(?<y2>[0-9]+)/', $line, $matches);
-        
+                $matches = $line->matches('/(?<x1>[0-9]+),(?<y1>[0-9]+)\s->\s(?<x2>[0-9]+),(?<y2>[0-9]+)/');
+
                 return new Line(
                     new Point((int)$matches['x1'], (int)$matches['y1']),
                     new Point((int)$matches['x2'], (int)$matches['y2'])
