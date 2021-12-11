@@ -2,6 +2,8 @@
 
 define('ARTISAN_BINARY', 'advent-of-code');
 
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 date_default_timezone_set('America/New_York');
 
 $app = new AOC\Application(
