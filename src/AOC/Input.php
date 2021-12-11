@@ -2,11 +2,13 @@
 
 namespace AOC;
 
+use AOC\DataStructures\Matrix;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
- * @property Illuminate\Support\Collection $lines
+ * @property \Illuminate\Support\Collection $lines
+ * @property \AOC\DataStructures\Matrix $matrix
  */
 class Input {
     private $filename;
@@ -24,6 +26,12 @@ class Input {
         if ($name == "lines") {
             return collect(file($this->filename))
                 ->map(fn($line) => Str::of($line)->trim());
+        } else if ($name == "matrix") {
+            return new Matrix(
+                $this->lines
+                    ->characters()
+                    ->map->asIntegers()
+            );
         }
     }
 }

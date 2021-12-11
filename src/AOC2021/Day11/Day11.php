@@ -4,55 +4,47 @@ namespace AOC2021\Day11;
 
 use AOC\Day;
 use AOC\Input;
+use AOC\Geometry\Point;
+use AOC\DataStructures\Matrix;
 use Illuminate\Support\Collection;
 
 class Day11 extends Day {
     public function part1(Input $input) {
-        $lines = $input->lines
-            ->characters()
-            ->flatMap->asIntegers();
-        
-        $width = $input->lines[0]->length();
-        $size = $lines->count();
+        $matrix = $input->matrix;
 
         $flashed = 0;
         for ($i = 0; $i < 100; $i++) {
-            [$lines, $count] = $this->step($lines, $size, $width);
+            [$matrix, $count] = $this->step($matrix);
             $flashed += $count;
         }
         return $flashed;
     }
 
     public function part2(Input $input) {
-        $lines = $input->lines
-            ->characters()
-            ->flatMap->asIntegers();
+        $matrix = $input->matrix;
         
-        $width = $input->lines[0]->length();
-        $size = $lines->count();
-
         $i = 1;
         while (true) {
-            [$lines, $count] = $this->step($lines, $size, $width);
-            if ($count == $size) {
+            [$matrix, $count] = $this->step($matrix);
+            if ($count == $matrix->size) {
                 return $i;
             }
             $i++;
         }
     }
 
-    private function step(Collection $collection, int $length, int $width) {
-        $collection = $collection->map(fn ($item) => $item + 1);
+    private function step(Matrix $matrix) {
+        $matrix = $matrix->map(fn ($item) => $item + 1);
 
         $flashed = collect();
-        $collection->filter(fn ($item) => $item > 9)
-            ->keys()
-            ->each(fn ($key) => $this->flash($key, $collection, $flashed, $length, $width));
+        foreach($matrix->filter(fn ($item) => $item > 9)->keys() as $key) {
+            $this->flash($key, $matrix, $flashed);            
+        }
 
-        return [$collection->map(fn ($item) => $item > 9 ? 0 : $item), $flashed->count()];
+        return [$matrix->map(fn ($item) => $item > 9 ? 0 : $item), $flashed->count()];
     }
 
-    private function flash(int $key, Collection $collection, Collection $flashed, int $length, int $width) {
+    private function flash(Point $key, Matrix $matrix, Collection $flashed) {
         if ($flashed->contains($key)) {
             return;
         }
@@ -60,32 +52,12 @@ class Day11 extends Day {
         $flashed->push($key);
 
         $self = $this;
-        $this->adjacentIndicies($key, $width, $length)
-            ->each(fn ($key) => $collection[$key] += 1)
-            ->each(function ($key) use ($collection, $self, $flashed, $length, $width) {
-                if ($collection[$key] > 9) {
-                    $self->flash($key, $collection, $flashed, $length, $width);
+        $matrix->adjacent($key, true)
+            ->each(fn ($key) => $matrix->put($key, $matrix->get($key) + 1))
+            ->each(function ($key) use ($matrix, $self, $flashed) {
+                if ($matrix->get($key) > 9) {
+                    $self->flash($key, $matrix, $flashed);
                 }
             });
-    }
-
-    private function adjacentIndicies($key, $width, $length) {
-        $indicies = collect([$key - $width, $key + $width]);
-
-        if ($key % $width > 0) {
-            $indicies->push($key - $width - 1, $key - 1, $key + $width - 1);
-        }
-
-        if ($key % $width < $width - 1) {
-            $indicies->push($key - $width + 1, $key + 1, $key + $width + 1);
-        }
-
-        return $indicies->filter(fn ($index) => $index >= 0 && $index < $length);
-    }
-
-    private function toString($collection, $width) {
-        return $collection->chunk($width)
-            ->map->join('')
-            ->join("\n");
     }
 }

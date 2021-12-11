@@ -7,55 +7,42 @@ use AOC\Input;
 
 class Day9 extends Day {
     public function part1(Input $input) {
-        $map = $input->lines
-            ->flatMap(function($line) {
-                return $line->characters()
-                    ->asIntegers();
-            });
+        $matrix = $input->matrix;
         
-        $width = $input->lines->first()->length();
-
-        return $map->filter(fn ($height, $key) => $this->adjacentIndicies($key, $width, $map->count())->every(fn ($index) => $map[$index] > $height))
+        return $matrix->filter(fn ($height, $key) => $matrix->adjacent($key)->every(fn ($index) => $matrix->get($index) > $height))
+            ->values()
             ->map(fn ($height) => $height + 1)
             ->sum();
     }
 
     public function part2(Input $input) {
-        $map = $input->lines
-            ->flatMap(function($line) {
-                return $line->characters()
-                    ->asIntegers();
-            });
+        $matrix = $input->matrix;
         
-        $width = $input->lines->first()->length();
-        $self = $this;
-        return $map->filter(fn ($height, $key) => $this->adjacentIndicies($key, $width, $map->count())->every(fn ($index) => $map[$index] > $height))
-            ->map(function($height, $key) use ($self, $width, $map) {
-                $indiciesToCheck = collect([$key]);
-                $basinIndicies = collect([$key]);
-                
-                while ($indiciesToCheck->count()) {
-                    $index = $indiciesToCheck->shift();
-                    $height = $map[$index];
+        return collect(
+            $matrix->filter(fn ($height, $key) => $matrix->adjacent($key)->every(fn ($index) => $matrix->get($index) > $height))
+                ->map(function($key, $height) use ($matrix) {
+                    $indiciesToCheck = collect([$key]);
+                    $basinIndicies = collect([$key]);
                     
-                    $newIndicies = $self->adjacentIndicies($index, $width, $map->count())
-                        ->filter(fn ($value) => $map[$value] != 9 && $map[$value] >= $height && !$basinIndicies->contains($value));
-                    $basinIndicies = $basinIndicies->concat($newIndicies);
+                    while ($indiciesToCheck->count()) {
+                        $index = $indiciesToCheck->shift();
+                        $height = $matrix->get($index);
+                        
+                        $newIndicies = $matrix->adjacent($index)
+                            ->filter(fn ($value) => $matrix->get($value) != 9 && $matrix->get($value) >= $height && !$basinIndicies->contains($value));
+                        $basinIndicies = $basinIndicies->concat($newIndicies);
+                        
+                        $indiciesToCheck = $indiciesToCheck->concat($newIndicies);
+                    }
                     
-                    $indiciesToCheck = $indiciesToCheck->concat($newIndicies);
-                }
-                
-                return $basinIndicies->count();
-            })
+                    return $basinIndicies->count();
+                })
+                ->values()
+            )
             ->sortDesc()
             ->take(3)
             ->reduce(function($total, $value) {
                 return $total * $value;
             }, 1);
-    }
-
-    private function adjacentIndicies($key, $width, $length) {
-        return collect([$key - 1, $key + 1, $key - $width, $key + $width])
-            ->filter(fn ($index) => $index >= 0 && $index < $length);
     }
 }
