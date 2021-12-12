@@ -19,8 +19,17 @@ class RunCommand extends Command {
         $input = $this->loadInput($year, $day);
         $day = $this->createDay($year, $day);
         
+        $start = microtime(true);
         $this->info('Part 1: ' . $day->part1($input));
+        $end = microtime(true);
+
+        $this->info('Part 1 executed in ' . $end - $start . ' seconds');
+
+        $start = microtime(true);
         $this->info('Part 2: ' . $day->part2($input));
+        $end = microtime(true);
+
+        $this->info('Part 2 executed in ' . $end - $start . ' seconds');
     }
 
     private function loadDay() {
