@@ -34,7 +34,7 @@ class Day12 extends Day {
         return $root->count('end');
     }
 
-    private function traverse(Graph $graph, $node, TreeNode $current, $canVisitSmallCaveTwice = false, int $level = 0) {
+    private function traverse(Graph $graph, $node, TreeNode $current, $canVisitSmallCaveTwice = false) {
         $isSmallCave = strtolower($node) === $node;
         if ($isSmallCave && $current->hasAnyParent($node)) {
             if ($canVisitSmallCaveTwice) {
@@ -52,6 +52,6 @@ class Day12 extends Day {
 
         $graph->connections($node)
             ->filter(fn ($node) => $node != 'start')
-            ->each(fn ($node) => $this->traverse($graph, $node, $newNode, $canVisitSmallCaveTwice, $level + 1));
+            ->each(fn ($node) => $this->traverse($graph, $node, $newNode, $canVisitSmallCaveTwice));
     }
 }
