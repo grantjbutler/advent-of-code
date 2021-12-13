@@ -11,6 +11,10 @@ class StringMacroProvider extends Provider {
             /** @var Illuminate\Support\Stringable $this */
             preg_match($pattern, $this->__toString(), $matches);
 
+            if (empty($matches)) {
+                return null;
+            }
+
             if (Arr::isAssoc($matches)) {
                 return collect($matches)
                     ->filter(function($item, $key) {

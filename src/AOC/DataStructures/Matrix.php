@@ -18,10 +18,22 @@ class Matrix {
         $this->collection = $collection;
     }
 
+    public static function fill(mixed $value, int $width, int $height): Matrix {
+        $fill = collect()->range(0, $height)
+            ->map(fn () => collect()->range(0, $width)->map(fn () => $value));
+        return new static($fill);
+    }
+
     public function __get($name) {
         if ($name == 'size') {
             return $this->collection->count() * $this->collection[0]->count();
         }
+    }
+
+    public function __toString() {
+        return $this->collection
+            ->map->join('')
+            ->join("\n");
     }
 
     public function get(Point $point): mixed {
@@ -74,5 +86,19 @@ class Matrix {
         }
 
         return $map;
+    }
+
+    public function splitHorizontal(int $y): array {
+        return [
+            $this->collection->slice(0, $y),
+            $this->collection->slice($y + 1)
+        ];
+    }
+
+    public function splitVertical(int $x): array {
+        return [
+            $this->collection->map->slice(0, $x),
+            $this->collection->map->slice($x + 1)
+        ];
     }
 }
