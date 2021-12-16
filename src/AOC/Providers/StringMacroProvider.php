@@ -29,5 +29,10 @@ class StringMacroProvider extends Provider {
             /** @var Illuminate\Support\Stringable $this */
             return $this->split(1);
         });
+
+        Stringable::macro('toDecimal', function($from) {
+            /** @var Illuminate\Support\Stringable $this */
+            return (int)base_convert((string)$this, $from, 10);
+        });
     }
 }
