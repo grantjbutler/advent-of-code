@@ -1,6 +1,6 @@
 <?php
 
-define('ARTISAN_BINARY', 'advent-of-code');
+define('ARTISAN_BINARY', 'aoc');
 
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
