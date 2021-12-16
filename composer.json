@@ -12,7 +12,8 @@
         "nikic/php-parser": "^4.13",
         "symfony/filesystem": "^5.4",
         "php-ds/php-ds": "^1.4",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "blackscorp/astar": "^1.2"
     },
     "authors": [
         {
