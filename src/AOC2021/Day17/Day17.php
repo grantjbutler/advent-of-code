@@ -21,7 +21,7 @@ class Day17 extends Day {
         $ys = collect()->range(1, abs($targetRect->bottomLeft->y));
 
         $self = $this;
-        $result = $xs->crossJoin($ys)->reduce(function ($carry, $velocity) use ($targetRect, $self) {
+        return $xs->crossJoin($ys)->reduce(function ($maxY, $velocity) use ($targetRect, $self) {
             $initialVelocity = new Point($velocity[0], $velocity[1]);
             $position = new Point(0, 0);
 
@@ -34,18 +34,14 @@ class Day17 extends Day {
                 $steps->push($position);
                 
                 if ($targetRect->contains($position)) {
-                    if (count($carry) == 0 || $carry[1] < $steps->max('y')) {
-                        $carry = [$initialVelocity, $steps->max('y')];
-                    }
+                    $maxY = max($maxY, $steps->max('y'));
 
                     break;
                 }
             }
 
-            return $carry;
-        }, []);
-
-        return $result[1];
+            return $maxY;
+        }, 0);
     }
 
     public function part2(Input $input) {
