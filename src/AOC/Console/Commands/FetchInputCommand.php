@@ -41,7 +41,7 @@ class FetchInputCommand extends Command {
 
     private function loadDay() {
         if ($this->option('wait')) {
-            return [now()->year, now()->day + 1];
+            return [now()->year, now()->addDay()->day];
         }
 
         if (($day = $this->argument('day'))) {
