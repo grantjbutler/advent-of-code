@@ -24,6 +24,7 @@
     "autoload": {
         "psr-4": {
             "AOC\\": "src/AOC",
+            "AOC2022\\": "src/AOC2022",
             "AOC2021\\": "src/AOC2021",
             "AOC2020\\": "src/AOC2020"
         },
