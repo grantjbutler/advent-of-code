@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @property \Illuminate\Support\Collection $lines
  * @property \AOC\DataStructures\Matrix $matrix
+ * @property \Illuminate\Support\Collection $groups
  */
 class Input {
     private $filename;
@@ -32,6 +33,8 @@ class Input {
                     ->characters()
                     ->map->asIntegers()
             );
+        } else if ($name == "groups") {
+            return $this->explode("\n\n");
         }
     }
 }
