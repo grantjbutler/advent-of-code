@@ -20,7 +20,8 @@ class Input {
 
     public function explode($separator): Collection {
         return Str::of(file_get_contents($this->filename))
-            ->explode($separator);
+            ->explode($separator)
+            ->map(fn($str) => Str::of($str));
     }
 
     public function __get($name) {

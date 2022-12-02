@@ -5,58 +5,66 @@ namespace AOC2022\Day2;
 use AOC\Day;
 use AOC\Input;
 
-enum Opponent: string {
-    case ROCK = 'A';
-    case PAPER = 'B';
-    case SCISSOR = 'C';
-}
+enum Move {
+    case ROCK;
+    case PAPER;
+    case SCISSOR;
 
-enum Me: string {
-    case ROCK = 'X';
-    case PAPER = 'Y';
-    case SCISSOR = 'Z';
+    static function from(string $value): Move {
+        switch ($value) {
+            case 'A':
+            case 'X':
+                return Move::ROCK;
+            case 'B':
+            case 'Y':
+                return Move::PAPER;
+            case 'C':
+            case 'Z':
+                return Move::SCISSOR;
+            default:
+                throw new \Exception();
+        }
+    }
 
     function score(): int {
         switch ($this) {
-            case Me::ROCK:
+            case Move::ROCK:
                 return 1;
-            case Me::PAPER:
+            case Move::PAPER:
                 return 2;
-            case Me::SCISSOR:
+            case Move::SCISSOR:
                 return 3;
         }
     }
 
-    function result(Opponent $opponent): Result {
+    function result(Move $opponent): Result {
+        if ($opponent == $this) {
+            return Result::DRAW;
+        }
+
         switch ($opponent) {
-            case Opponent::ROCK:
-                if ($this == Me::ROCK) {
-                    return Result::DRAW;
-                } else if ($this == Me::PAPER) {
+            case Move::ROCK:
+                if ($this == Move::PAPER) {
                     return Result::WIN;
                 } else {
                     return RESULT::LOSS;
                 }
-            case Opponent::PAPER:
-                if ($this == Me::ROCK) {
-                    return Result::LOSS;
-                } else if ($this == Me::PAPER) {
-                    return Result::DRAW;
-                } else {
-                    return RESULT::WIN;
-                }
-            case Opponent::SCISSOR:
-                if ($this == Me::ROCK) {
+            case Move::PAPER:
+                if ($this == Move::SCISSOR) {
                     return Result::WIN;
-                } else if ($this == Me::PAPER) {
-                    return Result::LOSS;
                 } else {
-                    return RESULT::DRAW;
+                    return RESULT::LOSS;
+                }
+            case Move::SCISSOR:
+                if ($this == Move::ROCK) {
+                    return Result::WIN;
+                } else {
+                    return Result::LOSS;
                 }
         }
     }
 
-    function roundScore(Opponent $opponent): int {
+    function roundScore(Move $opponent): int {
         return $this->score() + $this->result($opponent)->score();
     }
 }
@@ -77,36 +85,34 @@ enum Result: string {
         }
     }
 
-    function move(Opponent $opponent): Me {
+    function move(Move $opponent): Move {
+        if ($this == Result::DRAW) {
+            return $opponent;
+        }
+
         switch ($opponent) {
-            case Opponent::ROCK:
+            case Move::ROCK:
                 if ($this == Result::LOSS) {
-                    return Me::SCISSOR;
-                } else if ($this == Result::WIN) {
-                    return Me::PAPER;
+                    return Move::SCISSOR;
                 } else {
-                    return ME::ROCK;
+                    return Move::PAPER;
                 }
-            case Opponent::PAPER:
+            case Move::PAPER:
                 if ($this == Result::LOSS) {
-                    return Me::ROCK;
-                } else if ($this == Result::DRAW) {
-                    return Me::PAPER;
+                    return Move::ROCK;
                 } else {
-                    return Me::SCISSOR;
+                    return Move::SCISSOR;
                 }
-            case Opponent::SCISSOR:
-                if ($this == Result::WIN) {
-                    return Me::ROCK;
-                } else if ($this == Result::LOSS) {
-                    return Me::PAPER;
+            case Move::SCISSOR:
+                if ($this == Result::LOSS) {
+                    return Move::PAPER;
                 } else {
-                    return ME::SCISSOR;
+                    return Move::ROCK;
                 }
         }
     }
 
-    function roundScore(Opponent $opponent): int {
+    function roundScore(Move $opponent): int {
         return $this->move($opponent)->roundScore($opponent);
     }
 }
@@ -116,7 +122,7 @@ class Day2 extends Day {
         return $input->lines->map(function ($pair) {
             [$opponent, $me] = explode(' ', $pair);
 
-            return Me::from($me)->roundScore(Opponent::from($opponent));
+            return Move::from($me)->roundScore(Move::from($opponent));
         })
         ->sum();
     }
@@ -125,7 +131,7 @@ class Day2 extends Day {
         return $input->lines->map(function ($pair) {
             [$opponent, $result] = explode(' ', $pair);
             
-            return Result::from($result)->roundScore(Opponent::from($opponent));
+            return Result::from($result)->roundScore(Move::from($opponent));
         })
         ->sum();
     }
