@@ -13,12 +13,14 @@ class MakeCommand extends Command {
     public function handle() {
         [$year, $day] = $this->loadDay();
         $this->createDay($year, $day);
-
-        $this->info('Successfully created file for day ' . $day);
     }
 
     private function loadDay() {
         if (($day = $this->argument('day'))) {
+            if ($day == 'next') {
+                return [now()->year, now()->addDay()->day];
+            }
+            
             return explode(':', $day);
         }
 
@@ -27,6 +29,7 @@ class MakeCommand extends Command {
 
     private function createDay($year, $day) {
         $folder = implode(DIRECTORY_SEPARATOR, [app()->getBasePath(), 'src', 'AOC' . $year, 'Day' . $day]);
+        $file = $folder . DIRECTORY_SEPARATOR . 'Day' . $day . '.php';
         $template = <<<PHP
         <?php
 
@@ -47,7 +50,15 @@ class MakeCommand extends Command {
         PHP;
 
         $filesystem = new Filesystem();
+        if ($filesystem->exists($file)) {
+            $this->info('File already exists for day ' . $day . '. Skipping creation.');
+
+            return;
+        }
+
         $filesystem->mkdir($folder);
-        file_put_contents($folder . DIRECTORY_SEPARATOR . 'Day' . $day . '.php', $template);
+        file_put_contents($file, $template);
+
+        $this->info('Successfully created file for day ' . $day);
     }
 }
