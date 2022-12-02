@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Filesystem\Filesystem;
 
 class FetchInputCommand extends Command {
-    protected $signature = 'fetch:input {day?} {--wait}';
+    protected $signature = 'fetch:input {day?} {--wait} {--open}';
 
     protected $description = 'Fetches input for a given day, ';
 
@@ -33,6 +33,10 @@ class FetchInputCommand extends Command {
 
         $input = $this->fetchInput($year, $day);
         $this->writeInput($year, $day, $input);
+
+        if ($this->option('open')) {
+            $this->open($year, $day);
+        }
         
         if ($this->option('wait')) {
             $this->beep();
@@ -81,6 +85,11 @@ class FetchInputCommand extends Command {
         
         $this->filesystem->mkdir($folder);
         file_put_contents($folder . DIRECTORY_SEPARATOR . 'input.txt', $input);
+    }
+
+    private function open($year, $day) {
+        $url = escapeshellarg('https://adventofcode.com/' . $year . '/day/' . $day);
+        system('open ' . $url);
     }
 
     private function beep() {
