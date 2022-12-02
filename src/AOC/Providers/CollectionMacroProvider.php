@@ -48,12 +48,8 @@ class CollectionMacroProvider extends Provider {
 
         Collection::macro('columns', function($size) {
             /** @var Illuminate\Support\Collection $this */
-            /** @var Illuminate\Support\Collection $self */
-            $self = $this;
             return collect()->range(0, $size - 1)
-                ->map(function($index) use ($self, $size) {
-                    return $self->nth($size, $index);
-                });
+                ->map(fn($index) => $this->nth($size, $index));
         });
 
         Collection::macro('rows', function($size) {
@@ -71,6 +67,11 @@ class CollectionMacroProvider extends Provider {
             }
 
             return null;
+        });
+
+        Collection::macro('product', function() {
+            /** @var Illuminate\Support\Collection $this */
+            return $this->reduce(fn ($total, $value) => $total * $value, 1);
         });
     }
 }

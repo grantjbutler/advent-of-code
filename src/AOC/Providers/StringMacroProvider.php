@@ -17,9 +17,7 @@ class StringMacroProvider extends Provider {
 
             if (Arr::isAssoc($matches)) {
                 return collect($matches)
-                    ->filter(function($item, $key) {
-                        return is_string($key);
-                    });
+                    ->filter(fn($item, $key) => is_string($key));
             } else {
                 return collect($matches);
             }
