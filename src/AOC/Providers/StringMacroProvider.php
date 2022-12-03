@@ -47,12 +47,8 @@ class StringMacroProvider extends Provider {
         Stringable::macro('splitIn', function($count) {
             /** @var Illuminate\Support\Stringable $this */
             $chunk = ceil($this->length / $count);
-            $chunks = collect();
-            foreach (range(0, $this->length - 1, $chunk) as $i) {
-                $chunks->push($this->substr($i, $chunk));
-            }
-            return $chunks;
-
+            return collect(range(0, $this->length - 1, $chunk))
+                ->map(fn ($i) => $this->substr($i, $chunk));
         });
     }
 }
