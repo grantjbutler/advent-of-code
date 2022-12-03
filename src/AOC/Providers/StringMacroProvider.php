@@ -4,6 +4,7 @@ namespace AOC\Providers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
+use Illuminate\Support\Str;
 
 class StringMacroProvider extends Provider {
     function boot() {
@@ -25,12 +26,33 @@ class StringMacroProvider extends Provider {
 
         Stringable::macro('characters', function() {
             /** @var Illuminate\Support\Stringable $this */
-            return $this->split(1);
+            return $this->split(1)->map(fn ($char) => Str::of($char));
         });
 
         Stringable::macro('toDecimal', function($from) {
             /** @var Illuminate\Support\Stringable $this */
             return (int)base_convert((string)$this, $from, 10);
+        });
+
+        Stringable::macro('indexInAlphabet', function() {
+            /** @var Illuminate\Support\Stringable $this */
+            return ord($this->lower()) - ord('a');
+        });
+
+        Stringable::macro('isUpper', function() {
+            /** @var Illuminate\Support\Stringable $this */
+            return $this == $this->upper();
+        });
+
+        Stringable::macro('splitIn', function($count) {
+            /** @var Illuminate\Support\Stringable $this */
+            $chunk = ceil($this->length / $count);
+            $chunks = collect();
+            foreach (range(0, $this->length - 1, $chunk) as $i) {
+                $chunks->push($this->substr($i, $chunk));
+            }
+            return $chunks;
+
         });
     }
 }

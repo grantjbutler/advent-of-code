@@ -73,5 +73,12 @@ class CollectionMacroProvider extends Provider {
             /** @var Illuminate\Support\Collection $this */
             return $this->reduce(fn ($total, $value) => $total * $value, 1);
         });
+
+        Collection::macro('commonElements', function() {
+            /** @var Illuminate\Support\Collection $this */
+            return $this->skip(1)->reduce(function($common, $elements) {
+                return $common->intersect($elements)->values();
+            }, $this->first());
+        });
     }
 }
