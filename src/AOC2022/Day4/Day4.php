@@ -4,6 +4,7 @@ namespace AOC2022\Day4;
 
 use AOC\Day;
 use AOC\Input;
+use AOC\DataStructures\ClosedRange;
 use Illuminate\Support\Str;
 
 class Day4 extends Day {
@@ -15,12 +16,12 @@ class Day4 extends Day {
             ->map(function ($groups) {
                 return $groups->map(function ($range) {
                     [$start, $end] = $range->explode('-');
-                    return collect()->range((int)$start, (int)$end);
+                    return new ClosedRange((int)$start, (int)$end);
                 });
             })
             ->filter(function ($groups) {
-                return $groups[0]->diff($groups[1])->isEmpty()
-                    || $groups[1]->diff($groups[0])->isEmpty();
+                return $groups[0]->contains($groups[1])
+                    || $groups[1]->contains($groups[0]);
             })
             ->count();
     }
@@ -33,12 +34,12 @@ class Day4 extends Day {
             ->map(function ($groups) {
                 return $groups->map(function ($range) {
                     [$start, $end] = $range->explode('-');
-                    return collect()->range((int)$start, (int)$end);
+                    return new ClosedRange((int)$start, (int)$end);
                 });
             })
             ->filter(function ($groups) {
-                return $groups[0]->intersect($groups[1])->isNotEmpty()
-                    || $groups[1]->intersect($groups[0])->isNotEmpty();
+                return $groups[0]->overlaps($groups[1])
+                    || $groups[1]->overlaps($groups[0]);
             })
             ->count();
     }
