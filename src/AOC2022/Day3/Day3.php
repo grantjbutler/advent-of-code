@@ -4,6 +4,7 @@ namespace AOC2022\Day3;
 
 use AOC\Day;
 use AOC\Input;
+use Illuminate\Support\Str;
 
 class Day3 extends Day {
     public function part1(Input $input) {
@@ -12,6 +13,7 @@ class Day3 extends Day {
                 return $contents->splitIn(2)
                     ->map(fn ($compartment) => $compartment->characters()->unique())
                     ->commonElements()
+                    ->map(fn ($str) => Str::of($str))
                     ->map(function($item) {
                         return $item->indexInAlphabet() + ($item->isUpper() ? 27 : 1);
                     });
@@ -27,6 +29,7 @@ class Day3 extends Day {
                     return $contents->characters()->unique();
                 })
                 ->commonElements()
+                ->map(fn ($str) => Str::of($str))
                 ->map(function($item) {
                     return $item->indexInAlphabet() + ($item->isUpper() ? 27 : 1);
                 });

@@ -26,7 +26,7 @@ class StringMacroProvider extends Provider {
 
         Stringable::macro('characters', function() {
             /** @var Illuminate\Support\Stringable $this */
-            return $this->split(1)->map(fn ($char) => Str::of($char));
+            return $this->split(1);
         });
 
         Stringable::macro('toDecimal', function($from) {
