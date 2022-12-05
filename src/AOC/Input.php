@@ -35,7 +35,7 @@ class Input {
                     ->map->asIntegers()
             );
         } else if ($name == "groups") {
-            return $this->explode("\n\n");
+            return $this->explode("\n\n")->map(fn ($group) => Str::of($group));
         }
     }
 }
