@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Collection $lines
  * @property \AOC\DataStructures\Matrix $matrix
  * @property \Illuminate\Support\Collection $groups
+ * @property \Illuminate\Support\Collection $characters
  */
 class Input {
     private $filename;
@@ -36,6 +37,8 @@ class Input {
             );
         } else if ($name == "groups") {
             return $this->explode("\n\n")->map(fn ($group) => Str::of($group));
+        } else if ($name == "characters") {
+            return $this->lines[0]->characters();
         }
     }
 }

@@ -80,5 +80,11 @@ class CollectionMacroProvider extends Provider {
                 return $common->intersect($elements)->values();
             }, $this->first());
         });
+
+        Collection::macro('firstIndex', function($callback) {
+            /** @var Illuminate\Support\Collection $this */
+            return $this->zip($this->keys())
+                ->first(fn ($pair) => $callback($pair[0]))[1];
+        });
     }
 }
