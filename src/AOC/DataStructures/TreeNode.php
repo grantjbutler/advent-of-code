@@ -39,4 +39,16 @@ class TreeNode {
             ->map->count($value)
             ->sum();
     }
+
+    public function children(): Collection {
+        return clone $this->children;
+    }
+
+    public function value(): mixed {
+        return $this->value;
+    }
+
+    public function parent(): TreeNode | null {
+        return $this->parent;
+    }
 }
