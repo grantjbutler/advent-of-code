@@ -8,8 +8,8 @@ use AOC\Geometry\Size;
 use Ds\Map;
 
 /**
- * @property int $size
- * @property Size $axisSize
+ * @property Size $size
+ * @property int $count
  */
 class Matrix {
     private Collection $collection;
@@ -28,9 +28,9 @@ class Matrix {
 
     public function __get($name) {
         if ($name == 'size') {
-            return $this->collection->count() * $this->collection[0]->count();
-        } else if ($name == 'axisSize') {
             return new Size($this->collection[0]->count(), $this->collection->count());
+        } else if ($name == 'count') {
+            return $this->collection[0]->count() * $this->collection->count();
         }
     }
 

@@ -26,7 +26,7 @@ class Day11 extends Day {
         $i = 1;
         while (true) {
             [$matrix, $count] = $this->step($matrix);
-            if ($count == $matrix->size) {
+            if ($count == $matrix->count) {
                 return $i;
             }
             $i++;
