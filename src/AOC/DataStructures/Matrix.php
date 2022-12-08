@@ -4,10 +4,12 @@ namespace AOC\DataStructures;
 
 use Illuminate\Support\Collection;
 use AOC\Geometry\Point;
+use AOC\Geometry\Size;
 use Ds\Map;
 
 /**
  * @property int $size
+ * @property Size $axisSize
  */
 class Matrix {
     private Collection $collection;
@@ -27,6 +29,8 @@ class Matrix {
     public function __get($name) {
         if ($name == 'size') {
             return $this->collection->count() * $this->collection[0]->count();
+        } else if ($name == 'axisSize') {
+            return new Size($this->collection[0]->count(), $this->collection->count());
         }
     }
 
@@ -68,8 +72,7 @@ class Matrix {
 
     public function map($block): Matrix {
         return new Matrix(
-            $this->collection
-                ->map->map(fn ($item) => $block($item))
+            $this->collection->map(fn ($row, $y) => $row->map(fn ($item, $x) => $block($item, new Point($x, $y))))
         );
     }
 
@@ -100,5 +103,9 @@ class Matrix {
             $this->collection->map->slice(0, $x),
             $this->collection->map->slice($x + 1)
         ];
+    }
+
+    public function values(): Collection {
+        return $this->collection->flatten();
     }
 }
