@@ -70,6 +70,12 @@ class Matrix {
         return $points->filter(fn ($point) => $point->y >= 0 && $point->x >= 0 && $point->y < $this->collection->count() && $point->x < $this->collection[$point->y]->count());
     }
 
+    public function each($block) {
+        $this->collection->each(
+            fn ($row, $y) => $row->each(fn ($item, $x) => $block($item, new Point($x, $y)))
+        );
+    }
+
     public function map($block): Matrix {
         return new Matrix(
             $this->collection->map(fn ($row, $y) => $row->map(fn ($item, $x) => $block($item, new Point($x, $y))))
@@ -79,16 +85,21 @@ class Matrix {
     public function filter($block): Map {
         $map = new Map();
 
-        for ($y = 0; $y < $this->collection->count(); $y++) {
-            for ($x = 0; $x < $this->collection[$y]->count(); $x++) {
-                $key = new Point($x, $y);
-                if ($block($this->collection[$y][$x], $key)) {
-                    $map->put($key, $this->collection[$y][$x]);
-                }
+        $this->each(function ($item, $location) use ($block, $map) {
+            if ($block($item, $location)) {
+                $map->put($location, $item);
             }
-        }
+        });
 
         return $map;
+    }
+
+    public function reduce($block, $initial = null) {
+        $value = $initial;
+        $this->each(function ($item, $location) use (&$value, $block) {
+            $value = $block($value, $item, $location);
+        });
+        return $value;
     }
 
     public function splitHorizontal(int $y): array {
@@ -103,6 +114,28 @@ class Matrix {
             $this->collection->map->slice(0, $x),
             $this->collection->map->slice($x + 1)
         ];
+    }
+
+    public function min(null | callable $callback = null): mixed {
+        if (!$callback) {
+            return $this->collection->flatten()->min();
+        }
+
+        return $this->reduce(function ($result, $item, $location) use ($callback) {
+            $value = $callback($item, $location);
+            return is_null($result) || $value < $result ? $value : $result;
+        });
+    }
+
+    public function max(null | callable $callback = null): mixed {
+        if (!$callback) {
+            return $this->collection->flatten()->max();
+        }
+
+        return $this->reduce(function ($result, $item, $location) use ($callback) {
+            $value = $callback($item, $location);
+            return is_null($result) || $value > $result ? $value : $result;
+        });
     }
 
     public function values(): Collection {

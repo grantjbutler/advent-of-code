@@ -9,52 +9,46 @@ use AOC\Input;
 
 class Day8 extends Day {
     public function part1(Input $input) {
-        $trees = $input->lines->characters()->map->asIntegers();
-        $matrix = new Matrix($trees);
+        $matrix = new Matrix($input->lines->characters()->map->asIntegers());
         $self = $this;
 
         return $matrix
-            ->map(function ($height, $location) use ($trees, $matrix, $self) {
-                if ($location->x == 0 || $location->y == 0 || $location->x == $trees[0]->count() - 1 || $location->y == $trees->count() - 1) {
-                    return true;
+            ->reduce(function ($count, $height, $location) use ($matrix, $self) {
+                if ($location->x == 0 || $location->y == 0 || $location->x == $matrix->axisSize->width - 1 || $location->y == $matrix->axisSize->height - 1) {
+                    return $count + 1;
                 }
 
                 if ($self->hasLineOfSightToTopEdge($matrix, $location)) {
-                    return true;
+                    return $count + 1;
                 }
 
                 if ($self->hasLineOfSightToBottomEdge($matrix, $location)) {
-                    return true;
+                    return $count + 1;
                 }
 
                 if ($self->hasLineOfSightToLeftEdge($matrix, $location)) {
-                    return true;
+                    return $count + 1;
                 }
 
                 if ($self->hasLineOfSightToRightEdge($matrix, $location)) {
-                    return true;
+                    return $count + 1;
                 }
 
-                return false;
-            })
-            ->filter(fn ($value) => $value)
-            ->count();
+                return $count;
+            }, 0);
     }
 
     public function part2(Input $input) {
-        $trees = $input->lines->characters()->map->asIntegers();
-        $matrix = new Matrix($trees);
+        $matrix = new Matrix($input->lines->characters()->map->asIntegers());
         $self = $this;
 
         return $matrix
-            ->map(function ($height, $location) use ($trees, $matrix, $self) {
+            ->max(function ($height, $location) use ($matrix, $self) {
                 return $self->treesVisibleToTopEdge($matrix, $location)
                     * $self->treesVisibleToBottomEdge($matrix, $location)
                     * $self->treesVisibleToLeftEdge($matrix, $location)
                     * $self->treesVisibleToRightEdge($matrix, $location);
-            })
-            ->values()
-            ->max();
+            });
     }
 
     private function hasLineOfSightToTopEdge(Matrix $matrix, Point $location): bool {
