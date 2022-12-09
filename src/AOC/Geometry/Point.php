@@ -12,6 +12,16 @@ class Point {
         );
     }
 
+    public function isAdjacentTo(Point $point) {
+        return abs($this->x - $point->x) <= 1
+            && abs($this->y - $point->y) <= 1;
+    }
+
+    public function equals(Point $point) {
+        return $this->x == $point->x
+            && $this->y == $point->y;
+    }
+
     public function __toString() {
         return "{$this->x},{$this->y}";
     }
