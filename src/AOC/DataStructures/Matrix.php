@@ -40,14 +40,22 @@ class Matrix {
             ->join("\n");
     }
 
-    public function get(Point $point): mixed {
-        return $this->collection[$point->y][$point->x];
+    public function get(int|Point $index): mixed {
+        if (is_int($index)) {
+            $index = new Point($index % $this->collection[0]->count(), floor($index / $this->collection[0]->count()));
+        }
+        
+        return $this->collection[$index->y][$index->x];
     }
 
-    public function put(Point $point, mixed $value): void {
-        assert($this->collection->has($point->y) && $this->collection[$point->y]->has($point->x));
+    public function put(int|Point $index, mixed $value): void {
+        if (is_int($index)) {
+            $index = new Point($index % $this->collection[0]->count(), floor($index / $this->collection[0]->count()));
+        }
+        
+        assert($this->collection->has($index->y) && $this->collection[$index->y]->has($index->x));
 
-        $this->collection[$point->y][$point->x] = $value;
+        $this->collection[$index->y][$index->x] = $value;
     }
     
     public function adjacent(Point $point, bool $includeDiagonals = false): Collection {
