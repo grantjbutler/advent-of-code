@@ -21,8 +21,8 @@ class Matrix {
     }
 
     public static function fill(mixed $value, int $width, int $height): Matrix {
-        $fill = collect()->range(0, $height)
-            ->map(fn () => collect()->range(0, $width)->map(fn () => $value));
+        $fill = collect()->range(0, $height - 1)
+            ->map(fn () => collect()->range(0, $width - 1)->map(fn () => $value));
         return new static($fill);
     }
 

@@ -29,7 +29,7 @@ class Day13 extends Day {
                 return $instructions;
             }, collect());
         
-        $matrix = Matrix::fill('.', $points->max('x'), $points->max('y'));
+        $matrix = Matrix::fill('.', $points->max('x') + 1, $points->max('y') + 1);
 
         $points->each(fn ($point) => $matrix->put($point, '#'));
 
@@ -80,7 +80,7 @@ class Day13 extends Day {
                 return $instructions;
             }, collect());
         
-        $matrix = Matrix::fill('.', $points->max('x'), $points->max('y'));
+        $matrix = Matrix::fill('.', $points->max('x') + 1, $points->max('y') + 1);
 
         $points->each(fn ($point) => $matrix->put($point, '#'));
 
