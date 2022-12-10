@@ -8,44 +8,7 @@ use AOC\DataStructures\Matrix;
 use Illuminate\Support\Collection;
 use AOC\DataStructures\ClosedRange;
 
-interface Program {
-    function advanceBy(int $count);
-    function addX(int $value);
-}
-
-class SignalStrengthProgram implements Program {
-    private int $cycle = 0;
-    private int $x = 1;
-    private Collection $callbacks;
-
-    public function __construct() {
-        $this->callbacks = collect();
-    }
-
-    function on(int $value, callable $callback) {
-        $this->callbacks[$value] = $callback;
-    }
-
-    function advanceBy(int $count) {
-        for ($i = 0; $i < $count; $i++) {
-            $this->cycle++;
-
-            if (($callback = $this->callbacks->get($this->cycle))) {
-                $callback($this);
-            }
-        }
-    }
-
-    function addX(int $value) {
-        $this->x += $value;
-    }
-
-    function getX() {
-        return $this->x;
-    }
-}
-
-class DrawingProgram implements Program {
+class Program {
     private int $cycle = 0;
     private int $x = 1;
     private $cycleCallback;
@@ -97,21 +60,24 @@ class Add extends Instruction {
 
 class Day10 extends Day {
     public function part1(Input $input) {
-        $values = collect();
-        $program = new SignalStrengthProgram();
-        foreach (range(20, 220, 40) as $value) {
-            $program->on($value, fn ($program) => $values->push($program->getX() * $value));
-        }
+        $total = 0;
+        $program = new Program(function ($program) use (&$total) {
+            if (($program->getCycle() + 20) % 40 != 0) {
+                return;
+            }
+
+            $total += $program->getX() * $program->getCycle();
+        });
 
         $this->parse($input)
             ->each(fn ($instruction) => $instruction->execute($program));
         
-        return $values->sum();
+        return $total;
     }
 
     public function part2(Input $input) {
         $screen = Matrix::fill('.', 40, 6);
-        $program = new DrawingProgram(
+        $program = new Program(
             fn ($program) =>
                 with(
                     new ClosedRange($program->getX() - 1, $program->getX() + 1),
