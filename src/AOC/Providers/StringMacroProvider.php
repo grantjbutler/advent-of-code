@@ -8,9 +8,14 @@ use Illuminate\Support\Str;
 
 class StringMacroProvider extends Provider {
     function boot() {
-        Stringable::macro('matches', function($pattern) {
+        Stringable::macro('matches', function($pattern, int $offset = 0) {
             /** @var Illuminate\Support\Stringable $this */
-            preg_match($pattern, $this->__toString(), $matches);
+            $subject = $this;
+            if ($offset > 0) {
+                $subject = $this->substr($offset);
+            }
+
+            preg_match($pattern, $subject->__toString(), $matches);
 
             if (empty($matches)) {
                 return null;
@@ -18,9 +23,11 @@ class StringMacroProvider extends Provider {
 
             if (Arr::isAssoc($matches)) {
                 return collect($matches)
-                    ->filter(fn($item, $key) => is_string($key));
+                    ->filter(fn($item, $key) => is_string($key))
+                    ->merge(['<original>' => $matches[0]]);
             } else {
-                return collect($matches);
+                return collect($matches)
+                    ->merge(['<original>' => $matches[0]]);
             }
         });
 
