@@ -21,12 +21,12 @@ class Monkey {
         return $this->id;
     }
 
-    function inspect(): bool|array {
+    function inspect($worryLevel): bool|array {
         if ($this->items->isEmpty()) {
             return false;
         }
 
-        $item = gmp_div_q(($this->operation)($this->items->shift()), "3", 0);
+        $item = $worryLevel(($this->operation)($this->items->shift()));
         $target = gmp_mod($item, $this->test) == "0" ? $this->trueTarget : $this->falseTarget;
 
         $this->itemsInspected++;
@@ -40,6 +40,10 @@ class Monkey {
 
     function getItemsInspected(): int {
         return $this->itemsInspected;
+    }
+
+    function getTest(): int {
+        return $this->test;
     }
 }
 
@@ -61,7 +65,7 @@ class Day11 extends Day {
             ->mapWithkeys(fn ($text) => with($this->parseMonkey(Str::of($text)), fn ($monkey) => [$monkey->getId() => $monkey]));
         
         for ($i = 0; $i < 20; $i++) {
-            $this->runRound($monkeys);
+            $this->runRound($monkeys, fn ($item) => gmp_div_q($item, "3"));
         }
 
         return $monkeys
@@ -73,13 +77,13 @@ class Day11 extends Day {
     }
 
     public function part2(Input $input) {
-        return "DOES NOT COMPLETE IN A REASONABLE AMOUNT OF TIME";
-
         $monkeys = $input->explode("\n\n")
             ->mapWithkeys(fn ($text) => with($this->parseMonkey(Str::of($text)), fn ($monkey) => [$monkey->getId() => $monkey]));
         
+        $worryLevel = $monkeys->reduce(fn ($total, $monkey) => gmp_mul($total, $monkey->getTest()), "1");
+
         for ($i = 0; $i < 10000; $i++) {
-            $this->runRound($monkeys);
+            $this->runRound($monkeys, fn ($item) => gmp_mod($item, $worryLevel));
         }
 
         return $monkeys
@@ -90,9 +94,9 @@ class Day11 extends Day {
             ->product();
     }
 
-    private function runRound(Collection $monkeys) {
-        $monkeys->each(function($monkey) use ($monkeys) {
-            while (($result = $monkey->inspect())) {
+    private function runRound(Collection $monkeys, $worryLevel) {
+        $monkeys->each(function($monkey) use ($monkeys, $worryLevel) {
+            while (($result = $monkey->inspect($worryLevel))) {
                 [$item, $target] = $result;
                 $monkeys[$target]->addItem($item);
             }
