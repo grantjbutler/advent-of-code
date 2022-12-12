@@ -12,6 +12,12 @@ class Point {
         );
     }
 
+    public function manhattanDistanceTo(Point $point) {
+        $deltaX = abs($this->x - $point->x);
+        $deltaY = abs($this->y - $point->y);
+        return $deltaX + $deltaY;
+    }
+
     public function isAdjacentTo(Point $point) {
         return abs($this->x - $point->x) <= 1
             && abs($this->y - $point->y) <= 1;

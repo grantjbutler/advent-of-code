@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use AOC\Geometry\Point;
 use AOC\Geometry\Size;
 use Ds\Map;
+use Ds\Set;
 
 /**
  * @property Size $size
@@ -13,6 +14,10 @@ use Ds\Map;
  */
 class Matrix {
     private Collection $collection;
+
+    public function __clone() {
+        $this->collection = clone $this->collection;
+    }
 
     public function __construct(Collection $collection) {
         assert($collection->every(fn ($row) => $row->count() == $collection[0]->count()));
@@ -59,15 +64,15 @@ class Matrix {
     }
     
     public function adjacent(Point $point, bool $includeDiagonals = false): Collection {
-        $points = collect([
+        $points = [
             new Point($point->x, $point->y - 1),
             new Point($point->x, $point->y + 1),
             new Point($point->x - 1, $point->y),
             new Point($point->x + 1, $point->y)
-        ]);
+        ];
 
         if ($includeDiagonals) {
-            $points->push(
+            array_push($points,
                 new Point($point->x - 1, $point->y - 1),
                 new Point($point->x - 1, $point->y + 1),
                 new Point($point->x + 1, $point->y - 1),
@@ -75,7 +80,7 @@ class Matrix {
             );
         }
 
-        return $points->filter(fn ($point) => $point->y >= 0 && $point->x >= 0 && $point->y < $this->collection->count() && $point->x < $this->collection[$point->y]->count());
+        return collect(array_filter($points, fn ($point) => $point->y >= 0 && $point->x >= 0 && $point->y < $this->collection->count() && $point->x < $this->collection[$point->y]->count()));
     }
 
     public function each($block) {
@@ -144,6 +149,23 @@ class Matrix {
             $value = $callback($item, $location);
             return is_null($result) || $value > $result ? $value : $result;
         });
+    }
+
+    public function indexOf(mixed $value): Point|null {
+        for ($y = 0; $y < $this->collection->count(); $y++) {
+            for ($x = 0; $x < $this->collection[$y]->count(); $x++) {
+                if ($this->collection[$y][$x] == $value) {
+                    return new Point($x, $y);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function indicesOf(mixed $value): Set {
+        return $this->filter(fn ($item) => $item == $value)
+            ->keys();
     }
 
     public function values(): Collection {
