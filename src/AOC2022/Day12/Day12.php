@@ -8,15 +8,6 @@ use JMGQ\AStar\AStar;
 use AOC\Geometry\Point;
 use AOC\DataStructures\Matrix;
 use JMGQ\AStar\DomainLogicInterface;
-use JMGQ\AStar\Node\NodeIdentifierInterface;
-
-class Node implements NodeIdentifierInterface {
-    function __construct(public Point $point) {}
-
-    public function getUniqueNodeId(): string {
-        return $this->point->__toString();
-    }
-}
 
 class DomainLogic implements DomainLogicInterface
 {
