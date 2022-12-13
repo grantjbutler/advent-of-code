@@ -23,7 +23,8 @@ class DomainLogic implements DomainLogicInterface
     function __construct(private Matrix $matrix) {}
 
     public function getAdjacentNodes(mixed $node): iterable {
-        return $this->matrix->adjacent($node);
+        return $this->matrix->adjacent($node)
+            ->filter(fn ($position) => $this->calculateRealCost($node, $position) <= 1);
     }
 
     public function calculateRealCost(mixed $node, mixed $adjacent): int {
@@ -66,20 +67,30 @@ class Day12 extends Day {
     }
 
     public function part2(Input $input) {
-        return "PART 2 DOES NOT RETURN THE CORRECT ANSWER";
-
         $matrix = new Matrix($input->lines
             ->map->characters());
+        $logic = new DomainLogic($matrix);
 
-        $starts = $matrix->indicesOf('a');
         $end = $matrix->indexOf('E');
+        $starts = $matrix->indicesOf('a')
+            ->sorted(fn ($a, $b) => $logic->calculateEstimatedCost($a, $end) - $logic->calculateEstimatedCost($b, $end));
 
-        dump($starts->count());
+        $aStar = new AStar($logic);
 
-        $aStar = new AStar(new DomainLogic($matrix));
+        $length = [$matrix->count, new Point(1000, 1000)];
+        while (!$starts->isEmpty()) {
+            $position = $starts->first();
+            $starts->remove($position);
 
-        return $starts->map(fn($start) => count($aStar->run($start, $end)))
-            ->sorted()
-            ->first() - 1;
+            $path = $aStar->run($position, $end);
+
+            foreach ($path as $index => $point) {
+                if ($matrix->get($point) != 'a') { continue; }
+                $starts->remove($point);
+                $length = min($length, count($path) - $index - 1);
+            }
+        }
+
+        return $length;
     }
 }
