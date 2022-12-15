@@ -2,7 +2,9 @@
 
 namespace AOC\Geometry;
 
-class Point {
+use Ds\Hashable;
+
+class Point implements Hashable {
     public function __construct(public int $x, public int $y) {}
 
     public function distanceTo(Point $point) {
@@ -23,9 +25,13 @@ class Point {
             && abs($this->y - $point->y) <= 1;
     }
 
-    public function equals(Point $point) {
+    public function equals($point): bool {
         return $this->x == $point->x
             && $this->y == $point->y;
+    }
+
+    public function hash() {
+        return $this->x ^ $this->y;
     }
 
     public function __toString() {
