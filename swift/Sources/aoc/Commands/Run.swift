@@ -20,13 +20,7 @@ struct Run: AsyncParsableCommand {
             throw RunError.couldNotCreateSolution
         }
         
-        try run("Part 1") {
-            try solution.part1(input)
-        }
-        
-        try run("Part 2") {
-            try solution.part2(input)
-        }
+        try solution.run(input)
     }
     
     private func createInput() throws -> Input {
@@ -38,21 +32,6 @@ struct Run: AsyncParsableCommand {
             throw RunError.couldNotLoadInput
         }
         return try Input(url: resourceURL)
-    }
-    
-    private func run<T>(_ name: String, _ block: () throws -> T) rethrows {
-        let (result, time) = try measure(block)
-        
-        print("[\(name)] Result: \(result)")
-        print("[\(name)] Executed in \(time) seconds.")
-    }
-    
-    private func measure<T>(_ block: () throws -> T) rethrows -> (T, TimeInterval) {
-        let start = Date.now
-        let result = try block()
-        let end = Date.now
-        
-        return (result, end.timeIntervalSince(start))
     }
 }
 
