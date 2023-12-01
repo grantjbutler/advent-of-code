@@ -20,3 +20,14 @@ extension Sequence where Element: Comparable {
         return sorted(by: operation)
     }
 }
+
+extension Sequence where Element: Sequence, Element.Element: Hashable {
+    public func commonElements() -> any Sequence<Element.Element> {
+        var iterator = makeIterator()
+        guard let first = iterator.next() else { return [] }
+    
+        return dropFirst().reduce(into: Set<Element.Element>(first)) { partialResult, sequence in
+            partialResult.formIntersection(Set(sequence))
+        }
+    }
+}

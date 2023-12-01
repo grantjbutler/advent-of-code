@@ -1,7 +1,8 @@
+import Algorithms
 import Foundation
 
 public struct Input {
-    private let buffer: Substring
+    public let buffer: Substring
     
     public init(url: URL) throws {
         self.buffer = try String(contentsOf: url)[...]
@@ -16,41 +17,29 @@ public struct Input {
     }
     
     public var lines: Lines {
-        Lines(buffer.split(separator: "\n").map(Line.init(_:)))
+        Lines(buffer.split(separator: "\n").map(Input.init(_:)))
     }
     
-    public var integer: Int? {
-        Int(buffer)
+    public var uniqueCharacters: some Sequence<Character> {
+        return buffer.uniqued()
     }
     
-    public func split(separator: String) -> any Collection<Input> {
+    public var integer: Int? { Int(buffer) }
+    public var isEmpty: Bool { buffer.isEmpty }
+    
+    public func evenlyChunked(in count: Int) -> [Input] {
+        return buffer.evenlyChunked(in: count).map(Input.init(_:))
+    }
+    
+    public func split(separator: String) -> [Input] {
         buffer.split(separator: separator).map(Input.init(_:))
     }
 }
 
-public struct Line {
-    private let buffer: Substring
-    
-    public init(_ substring: Substring) {
-        self.buffer = substring
-    }
-    
-    public init(_ string: String) {
-        self.buffer = string[...]
-    }
-
-    public var integer: Int? { Int(buffer) }
-    public var isEmpty: Bool { buffer.isEmpty }
-    
-    public func split(separator: String) -> [Substring] {
-        buffer.split(separator: separator)
-    }
-}
-
 public struct Lines {
-    private let lines: [Line]
+    private let lines: [Input]
     
-    init(_ lines: [Line]) {
+    init(_ lines: [Input]) {
         self.lines = lines
     }
     
@@ -62,10 +51,32 @@ public struct Lines {
 }
 
 extension Lines: Sequence {
-    public typealias Element = Line
-    public typealias Iterator = IndexingIterator<[Line]>
+    public typealias Element = Input
+    public typealias Iterator = IndexingIterator<[Input]>
     
-    public func makeIterator() -> IndexingIterator<[Line]> {
+    public func makeIterator() -> IndexingIterator<[Input]> {
         lines.makeIterator()
     }
+}
+
+extension Lines: Collection {
+    public func index(after i: Array<Input>.Index) -> Array<Input>.Index {
+        lines.index(after: i)
+    }
+    
+    public subscript(position: Array<Input>.Index) -> Input {
+        _read {
+            yield lines[position]
+        }
+    }
+    
+    public var startIndex: Array<Input>.Index {
+        lines.startIndex
+    }
+    
+    public var endIndex: Array<Input>.Index {
+        lines.endIndex
+    }
+    
+    public typealias Index = Array<Input>.Index
 }

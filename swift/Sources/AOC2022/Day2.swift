@@ -87,7 +87,7 @@ public struct Day2: Solution {
             .compactMap { line in
                 let components = line.split(separator: " ")
                 
-                guard let opponent = Move(String(components[0])), let me = Move(String(components[1])) else { return nil }
+                guard let opponent = Move(String(components[0].buffer)), let me = Move(String(components[1].buffer)) else { return nil }
                 
                 return me.roundScore(againstOpponent: opponent)
             }
@@ -100,7 +100,7 @@ public struct Day2: Solution {
             .compactMap { line in
                 let components = line.split(separator: " ")
                 
-                guard let opponent = Move(String(components[0])), let result = GameResult(String(components[1])) else { return nil }
+                guard let opponent = Move(String(components[0].buffer)), let result = GameResult(String(components[1].buffer)) else { return nil }
                 
                 return result.roundScore(againstOpponent: opponent)
             }
