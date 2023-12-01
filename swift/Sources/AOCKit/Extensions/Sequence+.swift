@@ -1,8 +1,22 @@
+extension Sequence {
+    public func dump(name: String? = nil) -> Self {
+        return Swift.dump(self, name: name)
+    }
+    
+    public func inspect(_ block: (Self) -> Void) -> Self {
+        block(self)
+        
+        return self
+    }
+}
+
 extension Sequence where Element: BinaryInteger {
     public func sum() -> Element {
         reduce(Element.zero, (+))
     }
 }
+
+// MARK: -
 
 public enum SortDirection {
     case ascending
@@ -20,6 +34,8 @@ extension Sequence where Element: Comparable {
         return sorted(by: operation)
     }
 }
+
+// MARK: -
 
 extension Sequence where Element: Sequence, Element.Element: Hashable {
     public func commonElements() -> any Sequence<Element.Element> {
