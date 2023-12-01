@@ -11,10 +11,7 @@ struct Make: AsyncParsableCommand {
     var day: Day = .today
     
     func run() async throws {
-        let folderURL = URL(filePath: #filePath, directoryHint: .notDirectory) // Sources/aoc/Commands/Make.swift
-            .deletingLastPathComponent() // Sources/aoc/Commands/
-            .deletingLastPathComponent() // Sources/aoc/
-            .deletingLastPathComponent() // Sources/
+        let folderURL = AOC.rootDir
             .appending(component: "AOC\(day.year)", directoryHint: .isDirectory)
         
         let fileURL = folderURL.appending(component: "Day\(day.day).swift", directoryHint: .notDirectory)

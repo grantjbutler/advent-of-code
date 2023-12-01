@@ -77,10 +77,7 @@ extension Fetch {
         }
         
         private func writeInput(_ data: Data) throws {
-            let folder = URL(filePath: #filePath, directoryHint: .notDirectory) // Sources/aoc/Commands/FetchInput.swift
-                .deletingLastPathComponent() // Sources/aoc/Commands/
-                .deletingLastPathComponent() // Sources/aoc/
-                .deletingLastPathComponent() // Sources/
+            let folder = AOC.rootDir
                 .appending(components: "AOC\(day.year)", "Inputs", "Day\(day.day)", directoryHint: .isDirectory)
             
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
