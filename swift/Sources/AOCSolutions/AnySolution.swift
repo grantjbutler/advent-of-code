@@ -23,13 +23,16 @@ private func runSolution<T>(_ name: String, _ block: () throws -> T) rethrows {
     let (result, time) = try measure(block)
     
     print("[\(name)] Result: \(result)")
-    print("[\(name)] Executed in \(time) seconds.")
+    print("[\(name)] Executed in \(time.formatted(.units(allowed: [.seconds], fractionalPart: .show(length: 4)))).")
 }
 
-private func measure<T>(_ block: () throws -> T) rethrows -> (T, TimeInterval) {
-    let start = Date.now
-    let result = try block()
-    let end = Date.now
+private func measure<T>(_ block: () throws -> T) rethrows -> (T, Duration) {
+    let clock = ContinuousClock()
     
-    return (result, end.timeIntervalSince(start))
+    var result: T?
+    let duration = try clock.measure {
+        result = try block()
+    }
+
+    return (result!, duration)
 }
