@@ -2,7 +2,7 @@ import Algorithms
 import Foundation
 
 public struct Input {
-    public let buffer: Substring
+    public private(set) var buffer: Substring
     
     public init(url: URL) throws {
         self.buffer = try String(contentsOf: url)[...]
@@ -25,6 +25,7 @@ public struct Input {
     }
     
     public var integer: Int? { Int(buffer) }
+    public var digits: String { buffer.filter(\.isNumber) }
     public var isEmpty: Bool { buffer.isEmpty }
     
     public func evenlyChunked(in count: Int) -> [Input] {
@@ -36,47 +37,57 @@ public struct Input {
     }
 }
 
-public struct Lines {
-    private let lines: [Input]
+extension Input: Sequence {
+    public typealias Element = Substring.Element
+    public typealias Iterator = Substring.Iterator
     
-    init(_ lines: [Input]) {
-        self.lines = lines
-    }
-    
-    public var integers: [Int] {
-        let integers = lines.compactMap(\.integer)
-        assert(integers.count == lines.count)
-        return integers
+    public func makeIterator() -> Substring.Iterator {
+        return buffer.makeIterator()
     }
 }
 
-extension Lines: Sequence {
-    public typealias Element = Input
-    public typealias Iterator = IndexingIterator<[Input]>
-    
-    public func makeIterator() -> IndexingIterator<[Input]> {
-        lines.makeIterator()
-    }
-}
-
-extension Lines: Collection {
-    public func index(after i: Array<Input>.Index) -> Array<Input>.Index {
-        lines.index(after: i)
+extension Input: Collection {
+    public func index(after i: Substring.Index) -> Substring.Index {
+        buffer.index(after: i)
     }
     
-    public subscript(position: Array<Input>.Index) -> Input {
+    public subscript(position: Substring.Index) -> Substring.Element {
         _read {
-            yield lines[position]
+            yield buffer[position]
         }
     }
     
-    public var startIndex: Array<Input>.Index {
-        lines.startIndex
+    public subscript(bounds: Range<Self.Index>) -> Self.SubSequence {
+        get {
+            buffer[bounds]
+        }
     }
     
-    public var endIndex: Array<Input>.Index {
-        lines.endIndex
+    public var startIndex: Substring.Index {
+        buffer.startIndex
     }
     
-    public typealias Index = Array<Input>.Index
+    public var endIndex: Substring.Index {
+        buffer.endIndex
+    }
+    
+    public typealias Index = Substring.Index
+}
+
+extension Input: BidirectionalCollection {
+    public func index(before i: Substring.Index) -> Substring.Index {
+        buffer.index(before: i)
+    }
+}
+
+extension Input: RangeReplaceableCollection {
+    public typealias SubSequence = Substring.SubSequence
+
+    public init() {
+        self.init("")
+    }
+    
+    public mutating func replaceSubrange<C>(_ subrange: Range<Self.Index>, with newElements: C) where C : Collection, Self.Element == C.Element {
+        buffer.replaceSubrange(subrange, with: newElements)
+    }
 }

@@ -18,7 +18,7 @@ public struct Day1: Solution {
     public func part1(_ input: Input) -> Int {
         input
             .lines
-            .map { $0.buffer.filter { $0.isNumber } }
+            .map(\.digits)
             .map { Int("\($0.first!)\($0.last!)")! }
             .sum()
     }
@@ -26,13 +26,13 @@ public struct Day1: Solution {
     public func part2(_ input: Input) -> Int {
         input
             .lines
-            .map { (line: Input) -> String in
-                return dump(mapping.reduce(into: String(line.buffer)) { (partialResult: inout String, pair: (key: String, value: String)) in
+            .map { (line: Input) -> Input in
+                return mapping.reduce(into: Input(line.buffer)) { (partialResult: inout Input, pair: (key: String, value: String)) in
                     partialResult.replace(pair.key, with: pair.key + pair.value + String(pair.key.last!))
-                })
+                }
             }
-            .map { $0.filter { $0.isNumber } }
-            .map { dump(Int("\($0.first!)\($0.last!)")!) }
+            .map(\.digits)
+            .map { Int("\($0.first!)\($0.last!)")! }
             .sum()
     }
 }
