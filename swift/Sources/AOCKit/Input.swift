@@ -42,8 +42,8 @@ public struct Line {
     public var integer: Int? { Int(buffer) }
     public var isEmpty: Bool { buffer.isEmpty }
     
-    public func split(separator: String) -> any Collection<Input> {
-        buffer.split(separator: separator).map(Input.init(_:))
+    public func split(separator: String) -> [Substring] {
+        buffer.split(separator: separator)
     }
 }
 

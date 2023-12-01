@@ -20,6 +20,8 @@ extension Fetch {
                 .init("HttpOnly"): true
             ]
             
+            try? FileManager.default.createDirectory(at: Fetch.cookiesURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+            
             let cookieData = try JSONSerialization.data(withJSONObject: [properties])
             try cookieData.write(to: Fetch.cookiesURL)
             

@@ -4,7 +4,8 @@ import Foundation
 
 public enum Registry {
     private static var solutions: [Day: AnySolution] = [
-        .init(year: 2022, day: 1): .init(AOC2022.Day1())
+        .init(year: 2022, day: 1): .init(AOC2022.Day1()),
+        .init(year: 2022, day: 2): .init(AOC2022.Day2()),
     ]
     private static var inputs: [Int: Bundle] = [
         2022: AOC2022.Resources.bundle

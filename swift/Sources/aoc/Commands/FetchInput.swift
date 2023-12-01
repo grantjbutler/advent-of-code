@@ -66,11 +66,11 @@ extension Fetch {
             
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw FetchError.invalidResposne
+                throw FetchError.invalidResponse
             }
             
             guard httpResponse.statusCode >= 200, httpResponse.statusCode <= 299 else {
-                throw FetchError.invalidResposne
+                throw FetchError.invalidResponse
             }
             
             return data
@@ -107,5 +107,5 @@ enum FetchError: Error {
     case noSessionCookie
     case couldNotCalculateTomorrow
     case couldNotLoadCookies
-    case invalidResposne
+    case invalidResponse
 }
