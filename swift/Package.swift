@@ -30,7 +30,8 @@ let package = Package(
             .product(name: "Algorithms", package: "swift-algorithms"),
             .product(name: "Collections", package: "swift-collections"),
         ]),
-        .target(name: "AOCSolutions", dependencies: ["AOCKit", "AOC2022"]),
-        .target(name: "AOC2022", dependencies: ["AOCKit"], resources: [.copy("Inputs")])
+        .target(name: "AOCSolutions", dependencies: ["AOCKit", "AOC2022", "AOC2023"]),
+        .target(name: "AOC2022", dependencies: ["AOCKit"], resources: [.copy("Inputs")]),
+        .target(name: "AOC2023", dependencies: ["AOCKit"], resources: [.copy("Inputs")])
     ]
 )

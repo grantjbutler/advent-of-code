@@ -18,6 +18,11 @@ extension Day {
     }
     
     public func nextDay() -> Day {
-        return .init(year: year, day: day + 1)
+        let month = day < 25 ? 12 : 11
+        let components = DateComponents(year: year, month: month, day: day)
+        let now = Calendar.adventOfCode.date(from: components)!
+        let nextDate = Calendar.adventOfCode.date(byAdding: .day, value: 1, to: now)!
+        let nextDateComponents = Calendar.adventOfCode.dateComponents([.day, .year], from: nextDate)
+        return Day(year: nextDateComponents.year!, day: nextDateComponents.day!)
     }
 }

@@ -45,11 +45,11 @@ extension Fetch {
         
         private func fetchInput() async throws -> Data {
             if wait {
-                print("Waiting until input is available...")
-                
                 guard let tomorrow = Calendar.adventOfCode.date(byAdding: .day, value: 1, to: Calendar.adventOfCode.startOfDay(for: .now)) else {
                     throw FetchError.couldNotCalculateTomorrow
                 }
+                
+                print("Waiting until input is available, \(tomorrow.formatted(.relative(presentation: .numeric)))...")
                 
                 try await Task.sleep(for: .seconds(tomorrow.timeIntervalSinceNow))
             }
