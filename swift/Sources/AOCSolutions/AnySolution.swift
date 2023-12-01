@@ -2,7 +2,7 @@ import AOCKit
 import Foundation
 
 public struct AnySolution {
-    public let run: (Input) throws -> Void
+    public let run: (String) throws -> Void
     
     init<S: Solution>(_ solution: S) {
         self.run = { input in

@@ -31,3 +31,11 @@ extension Sequence where Element: Sequence, Element.Element: Hashable {
         }
     }
 }
+
+// MARK: -
+
+extension Sequence where Element == String {
+    public var asIntegers: [Int] {
+        compactMap(Int.init(_:))
+    }
+}

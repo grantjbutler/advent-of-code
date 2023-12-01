@@ -15,7 +15,7 @@ private let mapping = [
 public struct Day1: Solution {
     public init() {}
 
-    public func part1(_ input: Input) -> Int {
+    public func part1(_ input: String) -> some CustomStringConvertible {
         input
             .lines
             .map(\.digits)
@@ -23,11 +23,11 @@ public struct Day1: Solution {
             .sum()
     }
     
-    public func part2(_ input: Input) -> Int {
+    public func part2(_ input: String) -> some CustomStringConvertible {
         input
             .lines
-            .map { (line: Input) -> Input in
-                return mapping.reduce(into: Input(line.buffer)) { (partialResult: inout Input, pair: (key: String, value: String)) in
+            .map { (line: String) -> String in
+                return mapping.reduce(into: line) { partialResult, pair in
                     partialResult.replace(pair.key, with: pair.key + pair.value + String(pair.key.last!))
                 }
             }
