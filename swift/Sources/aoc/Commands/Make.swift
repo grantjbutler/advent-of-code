@@ -36,11 +36,11 @@ private func template(_ day: Day) -> String {
     public struct Day\(day.day): Solution {
         public init() {}
 
-        public func part1(_ input: Input) -> some CustomStringConvertible {
+        public func part1(_ input: String) -> some CustomStringConvertible {
             return ""
         }
         
-        public func part2(_ input: Input) -> some CustomStringConvertible {
+        public func part2(_ input: String) -> some CustomStringConvertible {
             return ""
         }
     }
