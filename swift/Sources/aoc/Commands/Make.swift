@@ -1,6 +1,8 @@
 import AOCKit
 import ArgumentParser
 import Foundation
+import SwiftParser
+import SwiftSyntax
 
 struct Make: AsyncParsableCommand {
     static var configuration = CommandConfiguration(
@@ -25,7 +27,136 @@ struct Make: AsyncParsableCommand {
         
         try template(day).write(to: fileURL, atomically: true, encoding: .utf8)
         
+        try updateRegistrySourceCode()
+        
         print("Successfully created file for day \(day.day).")
+    }
+    
+    func updateRegistrySourceCode() throws {
+        let registryURL = AOC.rootDir
+            .appending(components: "AOCSolutions", "Registry.swift", directoryHint: .notDirectory)
+        
+        var registrySoureCode = try String(contentsOf: registryURL)
+        
+        let sourceFile = Parser.parse(source: registrySoureCode)
+        let statements = sourceFile
+            .statements
+            .map { statement in
+                guard case let .decl(decl) = statement.item,
+                    let `enum` = decl.as(EnumDeclSyntax.self) else { return statement }
+                    
+                guard `enum`.name.text == "Registry" else { return statement }
+                    
+                return statement
+                    .with(\.item, .decl(DeclSyntax(modify(enum: `enum`))))
+            }
+        
+        let modifiedSourceFile = sourceFile
+            .with(\.statements, CodeBlockItemListSyntax(statements))
+        
+        registrySoureCode = ""
+        modifiedSourceFile.write(to: &registrySoureCode)
+        
+        try registrySoureCode.write(to: registryURL, atomically: true, encoding: .utf8)
+    }
+    
+    func modify(`enum`: EnumDeclSyntax) -> EnumDeclSyntax {
+        let members = `enum`.memberBlock.members.map { member in
+            guard let variable = member.decl.as(VariableDeclSyntax.self) else { return member }
+            
+            let bindings = variable.bindings.map { binding in
+                guard let identifierPattern = binding.pattern.as(IdentifierPatternSyntax.self) else { return binding }
+                guard identifierPattern.identifier.text == "solutions" else { return binding }
+                
+                guard let initializer = binding.initializer else { return binding }
+                guard let dictionaryExpression = initializer.value.as(DictionaryExprSyntax.self) else { return binding }
+                
+                
+                
+                
+                let content: DictionaryExprSyntax.Content
+                switch dictionaryExpression.content {
+                case .colon:
+                    content = .elements(DictionaryElementListSyntax([makeRegistryEntry()]))
+                case var .elements(elementList):
+                    elementList.append(makeRegistryEntry())
+                    
+                    content = .elements(elementList)
+                }
+                
+                return binding.with(
+                    \.initializer, binding.initializer?.with(
+                        \.value, ExprSyntax(DictionaryExprSyntax(content: content))
+                    )
+                )
+            }
+            
+            return member
+                .with(\.decl, DeclSyntax(
+                    variable
+                        .with(\.bindings, PatternBindingListSyntax(bindings))
+                ))
+        }
+        
+        return `enum`
+            .with(\.memberBlock, `enum`.memberBlock
+                .with(\.members, MemberBlockItemListSyntax(members))
+            )
+    }
+    
+    private func makeRegistryEntry() -> DictionaryElementSyntax {
+        return .init(
+            leadingTrivia: [.newlines(1), .spaces(8)],
+            key: FunctionCallExprSyntax(
+                calledExpression: MemberAccessExprSyntax(
+                    period: .periodToken(),
+                    name: .keyword(.`init`)
+                ),
+                leftParen: .leftParenToken(),
+                arguments: LabeledExprListSyntax([
+                    LabeledExprSyntax(
+                        label: .identifier("year"),
+                        colon: .colonToken(),
+                        expression: IntegerLiteralExprSyntax(leadingTrivia: .space, literal: .integerLiteral("\(day.year)")),
+                        trailingComma: .commaToken()
+                    ),
+                    LabeledExprSyntax(
+                        leadingTrivia: .space,
+                        label: .identifier("day"),
+                        colon: .colonToken(),
+                        expression: IntegerLiteralExprSyntax(leadingTrivia: .space, literal: .integerLiteral("\(day.day)"))
+                    ),
+                ]),
+                rightParen: .rightParenToken()
+            ),
+            colon: .colonToken(),
+            value: FunctionCallExprSyntax(
+                leadingTrivia: .space,
+                calledExpression: MemberAccessExprSyntax(
+                    period: .periodToken(),
+                    name: .keyword(.`init`)
+                ),
+                leftParen: .leftParenToken(),
+                arguments: LabeledExprListSyntax([
+                    LabeledExprSyntax(
+                        expression: FunctionCallExprSyntax(
+                            calledExpression: MemberAccessExprSyntax(
+                                base: DeclReferenceExprSyntax(baseName: .identifier("AOC\(day.year)")),
+                                period: .periodToken(),
+                                declName: DeclReferenceExprSyntax(baseName: .identifier("Day\(day.day)"))
+                            ),
+                            leftParen: .leftParenToken(),
+                            arguments: LabeledExprListSyntax(),
+                            rightParen: .rightParenToken(),
+                            additionalTrailingClosures: MultipleTrailingClosureElementListSyntax()
+                        )
+                    ),
+                ]),
+                rightParen: .rightParenToken()
+            ),
+            trailingComma: .commaToken(),
+            trailingTrivia: [.newlines(1), .spaces(4)]
+        )
     }
 }
 
