@@ -42,9 +42,7 @@ public struct Day2: Solution {
                     }
                 }
                 
-                return bag.reduce(into: 1) { partialResult, pair in
-                    partialResult *= pair.value
-                }
+                return bag.product(\.value)
             }
             .sum()
     }

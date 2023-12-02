@@ -10,9 +10,33 @@ extension Sequence {
     }
 }
 
-extension Sequence where Element: BinaryInteger {
+// MARK: -
+
+extension Sequence {
+    public func sum<Number: AdditiveArithmetic>(_ getter: (Element) -> Number) -> Number {
+        reduce(into: .zero) { partial, element in
+            partial += getter(element)
+        }
+    }
+}
+
+extension Sequence {
+    public func product<Number: Numeric>(_ getter: (Element) -> Number) -> Number {
+        reduce(into: 1) { partial, element in
+            partial *= getter(element)
+        }
+    }
+}
+
+extension Sequence where Element: AdditiveArithmetic {
     public func sum() -> Element {
         reduce(Element.zero, (+))
+    }
+}
+ 
+extension Sequence where Element: Numeric {
+    public func product() -> Element {
+        reduce(1, (*))
     }
 }
 
@@ -50,8 +74,10 @@ extension Sequence where Element: Sequence, Element.Element: Hashable {
 
 // MARK: -
 
-extension Sequence where Element == String {
+extension Collection where Element == String {
     public var asIntegers: [Int] {
-        compactMap(Int.init(_:))
+        let integers = compactMap(Int.init(_:))
+        assert(integers.count == count)
+        return integers
     }
 }
