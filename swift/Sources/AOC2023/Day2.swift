@@ -4,25 +4,27 @@ private enum Color: String, CaseIterable {
     case blue
     case green
     case red
+    
+    var amountInBag: Int {
+        switch self {
+        case .blue: return 14
+        case .green: return 13
+        case .red: return 12
+        }
+    }
 }
 
 public struct Day2: Solution {
     public init() {}
 
     public func part1(_ input: String) throws -> some CustomStringConvertible {
-        let bag = [
-            Color.red: 12,
-            Color.green: 13,
-            Color.blue: 14
-        ]
-    
         return try input
             .lines
             .parse(using: gameParser)
             .compactMap { game in
                 return game.pulls.allSatisfy { pulls in
                     return pulls.allSatisfy { pair in
-                        bag[pair.key, default: 0] >= pair.value
+                        pair.key.amountInBag >= pair.value
                     }
                 } ? game.id : nil
             }
@@ -34,13 +36,12 @@ public struct Day2: Solution {
             .lines
             .parse(using: gameParser)
             .compactMap { game in
-                let bag = game.pulls.reduce(into: [Color: Int]()) { bag, pulls in
+                return game.pulls.reduce(into: [Color: Int]()) { bag, pulls in
                     bag = pulls.reduce(into: bag) { bag, pair in
                         bag[pair.key] = max(bag[pair.key, default: 0], pair.value)
                     }
                 }
-                
-                return bag.product(\.value)
+                .product(\.value)
             }
             .sum()
     }
