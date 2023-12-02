@@ -18,9 +18,8 @@ public struct Day2: Solution {
     
         return try input
             .lines
-            .compactMap { line in
-                let game = try gameParser.parse(line[...])
-                
+            .parse(using: gameParser)
+            .compactMap { game in
                 return game.pulls.allSatisfy { pulls in
                     return pulls.allSatisfy { pair in
                         bag[pair.key, default: 0] >= pair.value
@@ -33,9 +32,8 @@ public struct Day2: Solution {
     public func part2(_ input: String) throws -> some CustomStringConvertible {
         return try input
             .lines
-            .compactMap { line in
-                let game = try gameParser.parse(line[...])
-                
+            .parse(using: gameParser)
+            .compactMap { game in
                 let bag = game.pulls.reduce(into: [Color: Int]()) { bag, pulls in
                     bag = pulls.reduce(into: bag) { bag, pair in
                         bag[pair.key] = max(bag[pair.key, default: 0], pair.value)
