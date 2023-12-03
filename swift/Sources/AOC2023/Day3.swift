@@ -1,21 +1,23 @@
 import AOCKit
 import Foundation
 
-struct Part {
+public struct Part {
     var id = UUID()
     var number: String = ""
     var coordinates: [Point] = []
 }
 
-struct Point: Hashable {
-    let x: Int
-    let y: Int
+public struct Symbol {
+    let token: String
+    let coordinate: Point
 }
 
 public struct Day3: Solution {
-    public init() {}
+    public typealias SolutionInput = (parts: [Part], symbols: [Symbol])
 
-    public func part1(_ input: String) -> some CustomStringConvertible {
+    public init() {}
+    
+    public func transformInput(_ input: String) throws -> SolutionInput {
         let parts = input
             .lines
             .indexed()
@@ -31,7 +33,7 @@ public struct Day3: Solution {
                     }
             }
         
-        let symbolPoints = input
+        let symbols = input
             .lines
             .indexed()
             .flatMap { index, line in
@@ -40,53 +42,29 @@ public struct Day3: Solution {
                     .split(whereSeparator: { $0.element.isNumber || $0.element == "." })
                     .flatMap { slice in
                         slice.map { pair in
-                            Point(x: pair.offset, y: index)
+                            Symbol(token: String(pair.element), coordinate: Point(x: pair.offset, y: index))
                         }
                     }
             }
         
-        return symbolPoints
-            .flatMap { point in
-                find(parts: parts, center: point)
+        return (parts: parts, symbols: symbols)
+    }
+
+    public func part1(_ input: SolutionInput) -> some CustomStringConvertible {
+        return input.symbols
+            .flatMap { symbol in
+                find(parts: input.parts, center: symbol.coordinate)
             }
             .map(\.number)
             .asIntegers
             .sum()
     }
     
-    public func part2(_ input: String) -> some CustomStringConvertible {
-        let parts = input
-            .lines
-            .indexed()
-            .flatMap { index, line in
-                line
-                    .enumerated()
-                    .split(whereSeparator: { !$0.element.isNumber })
-                    .map { slice in
-                        slice.reduce(into: Part()) { partialResult, pair in
-                            partialResult.number.append(contentsOf: String(pair.element))
-                            partialResult.coordinates.append(Point(x: pair.offset, y: index))
-                        }
-                    }
-            }
-        
-        let symbolPoints = input
-            .lines
-            .indexed()
-            .flatMap { index, line in
-                line
-                    .enumerated()
-                    .split(whereSeparator: { $0.element != "*" })
-                    .flatMap { slice in
-                        slice.map { pair in
-                            Point(x: pair.offset, y: index)
-                        }
-                    }
-            }
-        
-        return symbolPoints
-            .compactMap { point -> Int? in
-                let parts = find(parts: parts, center: point)
+    public func part2(_ input: SolutionInput) -> some CustomStringConvertible {
+        return input.symbols
+            .filter { $0.token == "*" }
+            .compactMap { symbol -> Int? in
+                let parts = find(parts: input.parts, center: symbol.coordinate)
                 guard parts.count == 2 else { return nil }
                 
                 return parts
