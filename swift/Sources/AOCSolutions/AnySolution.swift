@@ -4,7 +4,7 @@ import Foundation
 public struct AnySolution {
     public let run: (String) throws -> Void
     
-    init<S: Solution>(_ solution: S) {
+    init<S: Solution>(_ solution: S.Type) {
         self.run = { input in
             let solutionInput = try solution.transformInput(input)
             

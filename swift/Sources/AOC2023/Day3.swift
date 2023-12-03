@@ -12,12 +12,10 @@ public struct Symbol {
     let coordinate: Point
 }
 
-public struct Day3: Solution {
+public enum Day3: Solution {
     public typealias SolutionInput = (parts: [Part], symbols: [Symbol])
 
-    public init() {}
-    
-    public func transformInput(_ input: String) throws -> SolutionInput {
+    public static func transformInput(_ input: String) throws -> SolutionInput {
         let parts = input
             .lines
             .indexed()
@@ -50,7 +48,7 @@ public struct Day3: Solution {
         return (parts: parts, symbols: symbols)
     }
 
-    public func part1(_ input: SolutionInput) -> some CustomStringConvertible {
+    public static func part1(_ input: SolutionInput) -> some CustomStringConvertible {
         return input.symbols
             .flatMap { symbol in
                 find(parts: input.parts, center: symbol.coordinate)
@@ -60,7 +58,7 @@ public struct Day3: Solution {
             .sum()
     }
     
-    public func part2(_ input: SolutionInput) -> some CustomStringConvertible {
+    public static func part2(_ input: SolutionInput) -> some CustomStringConvertible {
         return input.symbols
             .filter { $0.token == "*" }
             .compactMap { symbol -> Int? in

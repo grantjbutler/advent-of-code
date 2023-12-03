@@ -3,14 +3,14 @@ public protocol Solution {
     associatedtype Part1Output: CustomStringConvertible
     associatedtype Part2Output: CustomStringConvertible
     
-    func transformInput(_ input: String) throws -> SolutionInput
+    static func transformInput(_ input: String) throws -> SolutionInput
     
-    func part1(_ input: SolutionInput) throws -> Part1Output
-    func part2(_ input: SolutionInput) throws -> Part2Output
+    static func part1(_ input: SolutionInput) throws -> Part1Output
+    static func part2(_ input: SolutionInput) throws -> Part2Output
 }
 
 public extension Solution where SolutionInput == String {
-    func transformInput(_ input: String) -> SolutionInput {
+    static func transformInput(_ input: String) -> SolutionInput {
         input
     }
 }

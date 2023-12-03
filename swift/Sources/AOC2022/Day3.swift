@@ -1,10 +1,8 @@
 import AOCKit
 import Algorithms
 
-public struct Day3: Solution {
-    public init() {}
-
-    public func part1(_ input: String) -> Int {
+public enum Day3: Solution {
+    public static func part1(_ input: String) -> Int {
         input
             .lines
             .flatMap { line in
@@ -17,7 +15,7 @@ public struct Day3: Solution {
             .sum()
     }
     
-    public func part2(_ input: String) -> Int {
+    public static func part2(_ input: String) -> Int {
         input
             .lines
             .chunks(ofCount: 3)

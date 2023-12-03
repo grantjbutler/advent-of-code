@@ -71,9 +71,6 @@ struct Make: AsyncParsableCommand {
                 guard let initializer = binding.initializer else { return binding }
                 guard let dictionaryExpression = initializer.value.as(DictionaryExprSyntax.self) else { return binding }
                 
-                
-                
-                
                 let content: DictionaryExprSyntax.Content
                 switch dictionaryExpression.content {
                 case .colon:
@@ -139,16 +136,14 @@ struct Make: AsyncParsableCommand {
                 leftParen: .leftParenToken(),
                 arguments: LabeledExprListSyntax([
                     LabeledExprSyntax(
-                        expression: FunctionCallExprSyntax(
-                            calledExpression: MemberAccessExprSyntax(
+                        expression: MemberAccessExprSyntax(
+                            base: MemberAccessExprSyntax(
                                 base: DeclReferenceExprSyntax(baseName: .identifier("AOC\(day.year)")),
                                 period: .periodToken(),
                                 declName: DeclReferenceExprSyntax(baseName: .identifier("Day\(day.day)"))
                             ),
-                            leftParen: .leftParenToken(),
-                            arguments: LabeledExprListSyntax(),
-                            rightParen: .rightParenToken(),
-                            additionalTrailingClosures: MultipleTrailingClosureElementListSyntax()
+                            period: .periodToken(),
+                            declName: DeclReferenceExprSyntax(baseName: .keyword(.`self`))
                         )
                     ),
                 ]),
@@ -164,14 +159,14 @@ private func template(_ day: Day) -> String {
     return """
     import AOCKit
 
-    public struct Day\(day.day): Solution {
-        public init() {}
-
-        public func part1(_ input: String) -> some CustomStringConvertible {
+    public enum Day\(day.day): Solution {
+        public typealias SolutionInput = String
+    
+        public static func part1(_ input: SolutionInput) -> some CustomStringConvertible {
             return ""
         }
         
-        public func part2(_ input: String) -> some CustomStringConvertible {
+        public static func part2(_ input: SolutionInput) -> some CustomStringConvertible {
             return ""
         }
     }

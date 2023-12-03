@@ -12,10 +12,8 @@ private let mapping = [
     "nine": "9"
 ]
 
-public struct Day1: Solution {
-    public init() {}
-
-    public func part1(_ input: String) -> some CustomStringConvertible {
+public enum Day1: Solution {
+    public static func part1(_ input: String) -> some CustomStringConvertible {
         input
             .lines
             .map(\.digits)
@@ -23,7 +21,7 @@ public struct Day1: Solution {
             .sum()
     }
     
-    public func part2(_ input: String) -> some CustomStringConvertible {
+    public static func part2(_ input: String) -> some CustomStringConvertible {
         input
             .lines
             .map { (line: String) -> String in

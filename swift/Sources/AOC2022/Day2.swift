@@ -78,10 +78,8 @@ enum GameResult {
     }
 }
 
-public struct Day2: Solution {
-    public init() {}
-
-    public func part1(_ input: String) -> Int {
+public enum Day2: Solution {
+    public static func part1(_ input: String) -> Int {
         return input
             .lines
             .compactMap { line in
@@ -94,7 +92,7 @@ public struct Day2: Solution {
             .sum()
     }
     
-    public func part2(_ input: String) -> Int {
+    public static func part2(_ input: String) -> Int {
         return input
             .lines
             .compactMap { line in

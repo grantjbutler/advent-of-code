@@ -14,10 +14,8 @@ private enum Color: String, CaseIterable {
     }
 }
 
-public struct Day2: Solution {
-    public init() {}
-
-    public func part1(_ input: String) throws -> some CustomStringConvertible {
+public enum Day2: Solution {
+    public static func part1(_ input: String) throws -> some CustomStringConvertible {
         return try input
             .lines
             .parse(using: gameParser)
@@ -31,7 +29,7 @@ public struct Day2: Solution {
             .sum()
     }
     
-    public func part2(_ input: String) throws -> some CustomStringConvertible {
+    public static func part2(_ input: String) throws -> some CustomStringConvertible {
         return try input
             .lines
             .parse(using: gameParser)
