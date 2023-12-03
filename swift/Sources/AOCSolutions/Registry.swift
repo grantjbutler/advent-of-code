@@ -11,6 +11,7 @@ public enum Registry {
         
         .init(year: 2023, day: 1): .init(AOC2023.Day1()),
         .init(year: 2023, day: 2): .init(AOC2023.Day2()),
+        .init(year: 2023, day: 3): .init(AOC2023.Day3()),
     ]
     private static var inputs: [Int: Bundle] = [
         2022: AOC2022.Resources.bundle,
