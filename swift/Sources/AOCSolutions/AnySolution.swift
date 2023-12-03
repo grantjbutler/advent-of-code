@@ -6,7 +6,11 @@ public struct AnySolution {
     
     init<S: Solution>(_ solution: S.Type) {
         self.run = { input in
-            let solutionInput = try solution.transformInput(input)
+            let (solutionInput, parsingDuration) = try measure {
+                try solution.transformInput(input)
+            }
+            
+            print("[Parsing Input] Executed in \(parsingDuration.formatted(.units(allowed: [.seconds], fractionalPart: .show(length: 4)))).")
             
             try runSolution("Part 1") {
                 try solution.part1(solutionInput)
