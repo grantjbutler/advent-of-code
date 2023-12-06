@@ -18,11 +18,20 @@ public enum Day6: Solution {
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
         let (time, record) = try part2Parser.parse(input[...])
         
-        return (1..<time).map { pressDuration in
+        let lowerBound = (1..<time).first(where: { pressDuration in
             let distance = pressDuration * (time - pressDuration)
-            return distance > record ? 1 : 0
-        }
-        .sum()
+            return distance > record
+        })!
+        
+        var upperBound = (time - 1)
+        repeat {
+            let distance = upperBound * (time - upperBound)
+            if distance > record { break }
+            
+            upperBound -= 1
+        } while upperBound > lowerBound
+        
+        return upperBound - lowerBound + 1
     }
 }
 
