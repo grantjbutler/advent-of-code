@@ -1,6 +1,7 @@
 import AOCKit
 import AOC2022
 import AOC2023
+import AOC2024
 import Foundation
 
 public enum Registry {
@@ -18,10 +19,13 @@ public enum Registry {
         .init(year: 2023, day: 7): .init(AOC2023.Day7.self),
         .init(year: 2023, day: 8): .init(AOC2023.Day8.self),
         .init(year: 2023, day: 9): .init(AOC2023.Day9.self),
+        
+        .init(year: 2024, day: 1): .init(AOC2024.Day1.self),
     ]
     private static var inputs: [Int: Bundle] = [
         2022: AOC2022.Resources.bundle,
-        2023: AOC2023.Resources.bundle
+        2023: AOC2023.Resources.bundle,
+        2024: AOC2024.Resources.bundle
     ]
     
     public static func solution(for day: Day) -> AnySolution? {

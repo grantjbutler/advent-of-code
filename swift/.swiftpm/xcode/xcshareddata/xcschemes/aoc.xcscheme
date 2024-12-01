@@ -55,12 +55,16 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "2023:9"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--test"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "2023:1"
-            isEnabled = "YES">
+            argument = "--wait"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--open"

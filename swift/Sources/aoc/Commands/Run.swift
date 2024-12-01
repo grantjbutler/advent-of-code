@@ -25,10 +25,12 @@ struct Run: AsyncParsableCommand {
     
     private func createInput() throws -> String {
         guard let bundle = Registry.inputBundle(for: day.year) else {
+            print("no bundle")
             throw RunError.couldNotLoadInput
         }
         let filename = test ? "test" : "input"
         guard let resourceURL = bundle.url(forResource: "Inputs/Day\(day.day)/\(filename)", withExtension: "txt") else {
+            print("no file")
             throw RunError.couldNotLoadInput
         }
         return try String(contentsOf: resourceURL).trimmingCharacters(in: .newlines) // Xcode has a habit of adding new lines to the end of files, so let's get rid of that.
