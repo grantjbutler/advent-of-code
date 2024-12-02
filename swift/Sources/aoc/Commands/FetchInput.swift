@@ -55,12 +55,17 @@ extension Fetch {
             }
             
             let encodedCookies = try Data(contentsOf: Fetch.cookiesURL)
-            guard let cookies = try JSONSerialization.jsonObject(with: encodedCookies) as? [[HTTPCookiePropertyKey: Any]] else {
+            guard let cookieObjects = try JSONSerialization.jsonObject(with: encodedCookies) as? [[HTTPCookiePropertyKey: Any]] else {
+                throw FetchError.couldNotLoadCookies
+            }
+            
+            let cookies = cookieObjects.compactMap(HTTPCookie.init(properties:))
+            guard cookies.count == cookieObjects.count else {
                 throw FetchError.couldNotLoadCookies
             }
             
             var request = URLRequest(url: URL(string: "https://adventofcode.com/\(day.year)/day/\(day.day)/input")!)
-            HTTPCookie.requestHeaderFields(with: cookies.compactMap(HTTPCookie.init(properties:))).forEach { pair in
+            HTTPCookie.requestHeaderFields(with: cookies).forEach { pair in
                 request.addValue(pair.value, forHTTPHeaderField: pair.key)
             }
             
