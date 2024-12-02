@@ -105,4 +105,5 @@ enum FetchError: Error {
     case couldNotCalculateTomorrow
     case couldNotLoadCookies
     case invalidResponse
+    case invalidCookie
 }

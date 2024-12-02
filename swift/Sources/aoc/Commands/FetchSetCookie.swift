@@ -14,11 +14,16 @@ extension Fetch {
         func run() async throws {
             let properties: [HTTPCookiePropertyKey: Any] = [
                 .domain: ".adventofcode.com",
+                .path: "/",
                 .name: "session",
                 .value: cookie,
                 .secure: true,
                 .init("HttpOnly"): true
             ]
+            
+            guard HTTPCookie(properties: properties) != nil else {
+                throw FetchError.invalidCookie
+            }
             
             try? FileManager.default.createDirectory(at: Fetch.cookiesURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             
