@@ -5,7 +5,7 @@ import AppKit
 
 extension Fetch {
     struct Input: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
+        static let configuration = CommandConfiguration(
             commandName: "input",
             abstract: "Fetches the input for a given day."
         )

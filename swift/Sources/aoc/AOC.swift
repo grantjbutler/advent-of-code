@@ -3,7 +3,7 @@ import Foundation
 
 @main
 struct AOC: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         abstract: "CLI for working with Advent of Code",
         subcommands: [Run.self, Fetch.self, Make.self],
         defaultSubcommand: Run.self

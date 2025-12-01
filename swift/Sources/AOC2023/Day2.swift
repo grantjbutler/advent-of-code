@@ -18,7 +18,7 @@ public enum Day2: Solution {
     public static func part1(_ input: String) throws -> some CustomStringConvertible {
         return try input
             .lines
-            .parse(using: gameParser)
+            .parse(using: GameParser())
             .compactMap { game in
                 return game.pulls.allSatisfy { pulls in
                     return pulls.allSatisfy { pair in
@@ -32,7 +32,7 @@ public enum Day2: Solution {
     public static func part2(_ input: String) throws -> some CustomStringConvertible {
         return try input
             .lines
-            .parse(using: gameParser)
+            .parse(using: GameParser())
             .compactMap { game in
                 return game.pulls.reduce(into: [Color: Int]()) { bag, pulls in
                     bag = pulls.reduce(into: bag) { bag, pair in
@@ -50,29 +50,34 @@ private struct Game {
     let pulls: [[Color: Int]]
 }
 
-private let gameParser = Parse(input: Substring.self) {
-    Game(id: $0, pulls: $1.map { pairs in
-        pairs.reduce(into: [Color: Int]()) { partial, next in
-            partial[next.1] = next.0
+private struct GameParser: Parser {
+    var body: some Parser<Substring, Game> {
+        Parse {
+            Game(id: $0, pulls: $1.map { pairs in
+                pairs.reduce(into: [Color: Int]()) { partial, next in
+                    partial[next.1] = next.0
+                }
+            })
+        } with: {
+            "Game"
+                Whitespace()
+                Int.parser()
+                ":"
+                
+                Many {
+                    Whitespace()
+                    
+                    Many {
+                        Int.parser()
+                        Whitespace()
+                        Color.parser()
+                    } separator: {
+                        ", "
+                    }
+                } separator: {
+                    ";"
+                }
         }
-    })
-} with: {
-    "Game"
-    Whitespace()
-    Int.parser()
-    ":"
-    
-    Many {
-        Whitespace()
-        
-        Many {
-            Int.parser()
-            Whitespace()
-            Color.parser()
-        } separator: {
-            ", "
-        }
-    } separator: {
-        ";"
+
     }
 }

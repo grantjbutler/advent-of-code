@@ -5,7 +5,7 @@ import AOC2024
 import Foundation
 
 public enum Registry {
-    private static var solutions: [Day: AnySolution] = [
+    private static let solutions: [Day: AnySolution] = [
         .init(year: 2022, day: 1): .init(AOC2022.Day1.self),
         .init(year: 2022, day: 2): .init(AOC2022.Day2.self),
         .init(year: 2022, day: 3): .init(AOC2022.Day3.self),
@@ -28,7 +28,7 @@ public enum Registry {
         .init(year: 2024, day: 6): .init(AOC2024.Day6.self),
         .init(year: 2024, day: 7): .init(AOC2024.Day7.self),
     ]
-    private static var inputs: [Int: Bundle] = [
+    private static let inputs: [Int: Bundle] = [
         2022: AOC2022.Resources.bundle,
         2023: AOC2023.Resources.bundle,
         2024: AOC2024.Resources.bundle

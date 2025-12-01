@@ -4,7 +4,7 @@ public enum Day6: Solution {
     public typealias SolutionInput = String
 
     public static func part1(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        return try raceParser.parse(input[...])
+        return try Part1Parser().parse(input[...])
             .map { time, record in
                 return (1..<time).map { pressDuration in
                     let distance = pressDuration * (time - pressDuration)
@@ -16,7 +16,7 @@ public enum Day6: Solution {
     }
     
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        let (time, record) = try part2Parser.parse(input[...])
+        let (time, record) = try Part2Parser().parse(input[...])
         
         let lowerBound = (1..<time).first(where: { pressDuration in
             let distance = pressDuration * (time - pressDuration)
@@ -35,58 +35,48 @@ public enum Day6: Solution {
     }
 }
 
-private let raceParser = Parse(input: Substring.self) { times, distances in
-    return zip(times, distances).map { (time: $0, distance: $1) }
-} with: {
-    "Time:"
-    Whitespace()
-    
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
-    }
-    
-    Whitespace(1, .vertical)
-    
-    "Distance:"
-    Whitespace()
-    
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
+private struct RaceParser: Parser {
+    var body: some Parser<Substring, (times: [Int], distances: [Int])> {
+        Parse {
+            "Time:"
+            Whitespace()
+            
+            IntegersParser()
+            
+            Whitespace(1, .vertical)
+            
+            "Distance:"
+            Whitespace()
+            
+            IntegersParser()
+        }
+        .map { times, distances in
+            (times: times, distances: distances)
+        }
     }
 }
 
-private let part2Parser = Parse(input: Substring.self) {
-    "Time:"
-    Whitespace()
-    
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
+private struct Part1Parser: Parser {
+    var body: some Parser<Substring, [(time: Int, distance: Int)]> {
+        RaceParser()
+            .map { times, distances in
+                return zip(times, distances).map { (time: $0, distance: $1) }
+            }
     }
-    .map { ints in
-        Int(ints.reduce(into: "") { partialResult, int in
-            partialResult += "\(int)"
-        })!
-    }
-    
-    Whitespace(1, .vertical)
-    
-    "Distance:"
-    Whitespace()
-    
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
-    }
-    .map { ints in
-        Int(ints.reduce(into: "") { partialResult, int in
-            partialResult += "\(int)"
-        })!
+}
+
+private struct Part2Parser: Parser {
+    var body: some Parser<Substring, (Int, Int)> {
+        RaceParser()
+            .map { times, distances in
+                (
+                    Int(times.reduce(into: "") { partialResult, int in
+                        partialResult += "\(int)"
+                    })!,
+                    Int(distances.reduce(into: "") { partialResult, int in
+                        partialResult += "\(int)"
+                    })!
+                )
+            }
     }
 }

@@ -4,7 +4,7 @@ import AOCSolutions
 import Foundation
 
 struct Run: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(abstract: "Runs the solution for a given day.")
+    static let configuration = CommandConfiguration(abstract: "Runs the solution for a given day.")
     
     @Argument
     var day: Day = .today
@@ -33,7 +33,7 @@ struct Run: AsyncParsableCommand {
             print("no file")
             throw RunError.couldNotLoadInput
         }
-        return try String(contentsOf: resourceURL).trimmingCharacters(in: .newlines) // Xcode has a habit of adding new lines to the end of files, so let's get rid of that.
+        return try String(contentsOf: resourceURL, encoding: .utf8).trimmingCharacters(in: .newlines) // Xcode has a habit of adding new lines to the end of files, so let's get rid of that.
     }
 }
 

@@ -7,7 +7,7 @@ public enum Day9: Solution {
         return try input
             .lines
             .map { line in
-                let numbers = try integersParser.parse(line[...])
+                let numbers = try IntegersParser().parse(line[...])
                 
                 var sequences: [[Int]] = [numbers]
                 var currentSequence = numbers
@@ -36,7 +36,7 @@ public enum Day9: Solution {
         return try input
             .lines
             .map { line in
-                let numbers = try integersParser.parse(line[...])
+                let numbers = try IntegersParser().parse(line[...])
                 
                 var sequences: [[Int]] = [numbers]
                 var currentSequence = numbers
@@ -59,13 +59,5 @@ public enum Day9: Solution {
                     }
             }
             .sum()
-    }
-}
-
-private let integersParser = Parse(input: Substring.self) {
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
     }
 }

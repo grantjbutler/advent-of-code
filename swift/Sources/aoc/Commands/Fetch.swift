@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 
 struct Fetch: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         abstract: "Handles fetching inputs.",
         subcommands: [Fetch.Input.self, Fetch.SetCookie.self]
     )

@@ -1,5 +1,4 @@
 import AOCKit
-import OrderedCollections
 
 private enum Card: String, CaseIterable, Equatable {
     case ace = "A"
@@ -258,7 +257,7 @@ public enum Day7: Solution {
     public typealias SolutionInput = String
 
     public static func part1(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        return try handsParser
+        return try HandsParser()
             .parse(input[...])
             .map(P1Hand.init(cards:bid:))
             .sorted { lhs, rhs in
@@ -272,7 +271,7 @@ public enum Day7: Solution {
     }
     
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        return try handsParser
+        return try HandsParser()
             .parse(input[...])
             .map(P2Hand.init(cards:bid:))
             .sorted { lhs, rhs in
@@ -286,20 +285,24 @@ public enum Day7: Solution {
     }
 }
 
-private let handParser = Parse(input: Substring.self) {
-    Many(5) {
-        Card.parser()
+private struct HandParser: Parser {
+    var body: some Parser<Substring, ([Card], Int)> {
+        Many(5) {
+            Card.parser()
+        }
+        
+        Whitespace()
+        
+        Int.parser()
     }
-    
-    Whitespace()
-    
-    Int.parser()
 }
 
-private let handsParser = Parse(input: Substring.self) {
-    Many {
-        handParser
-    } separator: {
-        Whitespace(1, .vertical)
+private struct HandsParser: Parser {
+    var body: some Parser<Substring, [HandParser.Output]> {
+        Many {
+            HandParser()
+        } separator: {
+            Whitespace(1, .vertical)
+        }
     }
 }

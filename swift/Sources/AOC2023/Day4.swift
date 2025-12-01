@@ -7,7 +7,7 @@ public enum Day4: Solution {
     public static func part1(_ input: SolutionInput) throws -> some CustomStringConvertible {
         return try input
             .lines
-            .parse(using: cardParser)
+            .parse(using: CardParser())
             .map { arg in
                 return arg.winningNumbers
                     .intersection(arg.cardNumbers)
@@ -23,7 +23,7 @@ public enum Day4: Solution {
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
         return try input
             .lines
-            .parse(using: cardParser)
+            .parse(using: CardParser())
             .reduce(into: [Int: Int]()) { partialResult, card in
                 let matches = card.winningNumbers
                     .intersection(card.cardNumbers)
@@ -41,31 +41,27 @@ public enum Day4: Solution {
     }
 }
 
-private let cardParser = Parse(input: Substring.self) { card, winningNumbers, cardNumbers in
-    return (card: card, winningNumbers: Set(winningNumbers), cardNumbers: Set(cardNumbers))
-} with: {
-    "Card"
-    Whitespace()
-    Digits()
-    ":"
-    
-    Whitespace()
-    
-    numbersParser
-    
-    Whitespace()
-    
-    "|"
-    
-    Whitespace()
-    
-    numbersParser
-}
-
-private let numbersParser = Parse(input: Substring.self) {
-    Many {
-        Digits()
-    } separator: {
-        Whitespace()
+private struct CardParser: Parser {
+    var body: some Parser<Substring, (card: Int, winningNumbers: Set<Int>, cardNumbers: Set<Int>)> {
+        Parse { card, winningNumbers, cardNumbers in
+            return (card: card, winningNumbers: Set(winningNumbers), cardNumbers: Set(cardNumbers))
+        } with: {
+            "Card"
+            Whitespace()
+            Digits()
+            ":"
+            
+            Whitespace()
+            
+            IntegersParser()
+            
+            Whitespace()
+            
+            "|"
+            
+            Whitespace()
+            
+            IntegersParser()
+        }
     }
 }

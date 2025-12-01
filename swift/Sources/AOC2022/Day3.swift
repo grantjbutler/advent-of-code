@@ -1,5 +1,4 @@
 import AOCKit
-import Algorithms
 
 public enum Day3: Solution {
     public static func part1(_ input: String) -> Int {

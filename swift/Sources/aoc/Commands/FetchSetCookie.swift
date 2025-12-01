@@ -3,7 +3,7 @@ import Foundation
 
 extension Fetch {
     struct SetCookie: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
+        static let configuration = CommandConfiguration(
             commandName: "set-cookie",
             abstract: "Sets the cookie to use for fetching inputs."
         )

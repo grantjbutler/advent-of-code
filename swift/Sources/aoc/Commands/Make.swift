@@ -5,7 +5,7 @@ import SwiftParser
 import SwiftSyntax
 
 struct Make: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         abstract: "Creates the basic structure for a day's problem."
     )
 
@@ -36,7 +36,7 @@ struct Make: AsyncParsableCommand {
         let registryURL = AOC.rootDir
             .appending(components: "AOCSolutions", "Registry.swift", directoryHint: .notDirectory)
         
-        var registrySoureCode = try String(contentsOf: registryURL)
+        var registrySoureCode = try String(contentsOf: registryURL, encoding: .utf8)
         
         let sourceFile = Parser.parse(source: registrySoureCode)
         let statements = sourceFile

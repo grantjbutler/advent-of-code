@@ -26,7 +26,7 @@ public enum Day8: Solution {
     public typealias SolutionInput = String
 
     public static func part1(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        let (instructions, nodes) = try instructionsParser
+        let (instructions, nodes) = try InstructionsParser()
             .parse(input[...])
         
         let graph = nodes.reduce(into: [Substring: (left: Substring, right: Substring)]()) { graph, node in
@@ -37,7 +37,7 @@ public enum Day8: Solution {
     }
     
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        let (instructions, nodes) = try instructionsParser
+        let (instructions, nodes) = try InstructionsParser()
             .parse(input[...])
         
         let graph = nodes.reduce(into: [Substring: (left: Substring, right: Substring)]()) { graph, node in
@@ -79,35 +79,41 @@ public enum Day8: Solution {
     }
 }
 
-private let nodeParser = Parse(input: Substring.self) {
-    (node: $0, left: $1, right: $2)
-} with: {
-    Prefix(3...3, while: { $0.isLetter || $0.isNumber })
-    
-    Whitespace()
-    
-    "="
-    
-    Whitespace()
-    
-    "("
-    Prefix(3...3, while: { $0.isLetter || $0.isNumber })
-    ","
-    Whitespace()
-    Prefix(3...3, while: { $0.isLetter || $0.isNumber })
-    ")"
+private struct NodeParser: Parser {
+    var body: some Parser<Substring, (node: Substring, left: Substring, right: Substring)> {
+        Parse {
+            (node: $0, left: $1, right: $2)
+        } with: {
+            Prefix(3...3, while: { $0.isLetter || $0.isNumber })
+            
+            Whitespace()
+            
+            "="
+            
+            Whitespace()
+            
+            "("
+            Prefix(3...3, while: { $0.isLetter || $0.isNumber })
+            ","
+            Whitespace()
+            Prefix(3...3, while: { $0.isLetter || $0.isNumber })
+            ")"
+        }
+    }
 }
 
-private let instructionsParser = Parse(input: Substring.self) {
-    Many {
-        Direction.parser()
-    }
-    
-    Whitespace()
-    
-    Many {
-        nodeParser
-    } separator: {
+private struct InstructionsParser: Parser {
+    var body: some Parser<Substring, ([Direction], [(node: Substring, left: Substring, right: Substring)])> {
+        Many {
+            Direction.parser()
+        }
+        
         Whitespace()
+        
+        Many {
+            NodeParser()
+        } separator: {
+            Whitespace()
+        }
     }
 }

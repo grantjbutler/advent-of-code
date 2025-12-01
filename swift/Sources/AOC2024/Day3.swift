@@ -34,7 +34,7 @@ public enum Day3: Solution {
         var enabled = true
         
         let instructions = try input.lines
-            .parse(using: parser)
+            .parse(using: TokensParser())
             .flatMap(\.self)
         
         return instructions.reduce(into: 0) { result, instruction in
@@ -61,12 +61,8 @@ private enum Token: Equatable {
     case mul(Int, Int)
 }
 
-private let parser = Parse {
-    Many(into: [Token]()) { result, token in
-        if token == Token.skipped { return }
-        
-        result.append(token)
-    } element: {
+private struct TokenParser: Parser {
+    var body: some Parser<Substring, Token> {
         OneOf {
             Parse {
                 "mul("
@@ -86,7 +82,19 @@ private let parser = Parse {
             First()
                 .map { _ in Token.skipped }
         }
-    } terminator: {
-        End()
+    }
+}
+
+private struct TokensParser: Parser {
+    var body: some Parser<Substring, [Token]> {
+        Many(into: [Token]()) { result, token in
+            if token == Token.skipped { return }
+            
+            result.append(token)
+        } element: {
+            TokenParser()
+        } terminator: {
+            End()
+        }
     }
 }

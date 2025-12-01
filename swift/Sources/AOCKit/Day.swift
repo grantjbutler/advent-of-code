@@ -1,7 +1,6 @@
-import ArgumentParser
 import Foundation
 
-public struct Day: Hashable {
+public struct Day: Hashable, Sendable {
     public let year: Int
     public let day: Int
     

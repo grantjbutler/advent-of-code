@@ -1,8 +1,8 @@
 import AOCKit
 import Foundation
 
-public struct AnySolution {
-    public let run: (String) throws -> Void
+public struct AnySolution: Sendable {
+    public let run: @Sendable (String) throws -> Void
     
     init<S: Solution>(_ solution: S.Type) {
         self.run = { input in

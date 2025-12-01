@@ -1,4 +1,4 @@
-public enum Direction {
+public enum Direction: Sendable {
     case north
     case south
     case east

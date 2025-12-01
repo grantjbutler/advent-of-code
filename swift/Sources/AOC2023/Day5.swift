@@ -26,7 +26,7 @@ public enum Day5: Solution {
     public typealias SolutionInput = String
 
     public static func part1(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        let garden = try part1Parser.parse(input[...])
+        let garden = try GardenParser(seedParser: SeedParser(), transform: Garden.init).parse(input[...])
         
         return garden
             .seeds
@@ -41,7 +41,7 @@ public enum Day5: Solution {
     }
     
     public static func part2(_ input: SolutionInput) throws -> some CustomStringConvertible {
-        let garden = try part2Parser.parse(input[...])
+        let garden = try GardenParser(seedParser: SeedPart2Parser(), transform: GardenPart2.init).parse(input[...])
         
         return garden
             .seeds
@@ -58,120 +58,102 @@ public enum Day5: Solution {
     }
 }
 
-private let seedParser = Parse(input: Substring.self) {
-    "seeds: "
-    
-    Many {
-        Int.parser()
-    } separator: {
-        Whitespace()
-    }
-}
-
-private let seedPart2Parser = Parse(input: Substring.self) {
-    "seeds: "
-    
-    Many {
-        Int.parser()
-        Whitespace()
-        Int.parser()
-    } separator: {
-        Whitespace()
-    }
-    .map { pairs in
-        return pairs.map { lowerBound, length in
-            return ClosedRange(uncheckedBounds: (lower: lowerBound, upper: lowerBound + length - 1))
+private struct SeedParser: Parser {
+    var body: some Parser<Substring, [Int]> {
+        Parse {
+            "seeds: "
+            
+            IntegersParser()
         }
     }
 }
 
-private func makeMapParser(named name: String) -> AnyParser<Substring, [ClosedRange<Int>: Int]> {
-    return Parse(input: Substring.self) {
-        "\(name) map:"
-        Whitespace(1, .vertical)
-        
-        Many {
-            Int.parser()
+private struct SeedPart2Parser: Parser {
+    var body: some Parser<Substring, [ClosedRange<Int>]> {
+        Parse {
+            "seeds: "
             
-            Whitespace()
-            
-            Int.parser()
-            
-            Whitespace()
-            
-            Int.parser()
-        } separator: {
-            Whitespace(1, .vertical)
-        }
-        .map { maps in
-            return maps.reduce(into: [ClosedRange<Int>: Int]()) { partialResult, triple in
-                partialResult[.init(uncheckedBounds: (lower: triple.1, upper: triple.1 + triple.2 - 1))] = triple.0
+            Many {
+                Int.parser()
+                Whitespace()
+                Int.parser()
+            } separator: {
+                Whitespace()
+            }
+            .map { pairs in
+                return pairs.map { lowerBound, length in
+                    return ClosedRange(uncheckedBounds: (lower: lowerBound, upper: lowerBound + length - 1))
+                }
             }
         }
     }
-    .eraseToAnyParser()
 }
 
-private let part1Parser = Parse(input: Substring.self, Garden.init(seeds:seedToSoil:soilToFertilizer:fertilizerToWater:waterToLight:lightToTemperature:temperatureToHumidity:humidityToLocation:)) {
-    seedParser
+private struct MapParser: Parser {
+    let name: String
     
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "seed-to-soil")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "soil-to-fertilizer")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "fertilizer-to-water")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "water-to-light")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "light-to-temperature")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "temperature-to-humidity")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "humidity-to-location")
+    var body: some Parser<Substring, [ClosedRange<Int>: Int]> {
+        Parse {
+            "\(name) map:"
+            Whitespace(1, .vertical)
+            
+            Many {
+                Int.parser()
+                
+                Whitespace()
+                
+                Int.parser()
+                
+                Whitespace()
+                
+                Int.parser()
+            } separator: {
+                Whitespace(1, .vertical)
+            }
+            .map { maps in
+                return maps.reduce(into: [ClosedRange<Int>: Int]()) { partialResult, triple in
+                    partialResult[.init(uncheckedBounds: (lower: triple.1, upper: triple.1 + triple.2 - 1))] = triple.0
+                }
+            }
+        }
+    }
 }
 
-private let part2Parser = Parse(input: Substring.self, GardenPart2.init(seeds:seedToSoil:soilToFertilizer:fertilizerToWater:waterToLight:lightToTemperature:temperatureToHumidity:humidityToLocation:)) {
-    seedPart2Parser
+private struct GardenParser<SeedParser: Parser, Output>: Parser where SeedParser.Input == Substring {
+    let seedParser: SeedParser
+    let transform: (SeedParser.Output, [ClosedRange<Int>: Int], [ClosedRange<Int>: Int], [ClosedRange<Int>: Int], [ClosedRange<Int>: Int], [ClosedRange<Int>: Int], [ClosedRange<Int>: Int], [ClosedRange<Int>: Int]) -> Output
     
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "seed-to-soil")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "soil-to-fertilizer")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "fertilizer-to-water")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "water-to-light")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "light-to-temperature")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "temperature-to-humidity")
-    
-    Whitespace(2, .vertical)
-    
-    makeMapParser(named: "humidity-to-location")
+    var body: some Parser<Substring, Output> {
+        Parse(transform) {
+            seedParser
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "seed-to-soil")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "soil-to-fertilizer")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "fertilizer-to-water")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "water-to-light")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "light-to-temperature")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "temperature-to-humidity")
+            
+            Whitespace(2, .vertical)
+            
+            MapParser(name: "humidity-to-location")
+        }
+    }
 }

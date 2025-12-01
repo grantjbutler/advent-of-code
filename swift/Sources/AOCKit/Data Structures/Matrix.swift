@@ -9,9 +9,10 @@ public struct Matrix<Element> {
         self.rowLength = collection[0].count
     }
     
-    public init(_ collection: [some Sequence<Element>]) {
-        self.init(collection.map(Array.init))
-    }
+//    public init(_ collection: [some Sequence<Element>]) {
+//        //                       v warning: Capture of non-Sendable type '(some Sequence<Element>).Type' in an isolated closure
+//        self.init(collection.map(Array.init))
+//    }
     
     private func index(from point: Point) -> Int {
         rowLength * point.y + point.x
@@ -45,6 +46,8 @@ extension Matrix where Element: Equatable {
         return point(from: index)
     }
 }
+
+extension Matrix: Sendable where Element: Sendable {}
 
 extension Matrix: Sequence {
     public func makeIterator() -> Array<Element>.Iterator {

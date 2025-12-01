@@ -1,4 +1,4 @@
-public protocol Solution {
+public protocol Solution: Sendable {
     associatedtype SolutionInput = String
     associatedtype Part1Output: CustomStringConvertible
     associatedtype Part2Output: CustomStringConvertible
