@@ -30,9 +30,10 @@ let package = Package(
             .product(name: "Collections", package: "swift-collections"),
             .product(name: "Parsing", package: "swift-parsing"),
         ]),
-        .target(name: "AOCSolutions", dependencies: ["AOCKit", "AOC2022", "AOC2023", "AOC2024"]),
+        .target(name: "AOCSolutions", dependencies: ["AOCKit", "AOC2022", "AOC2023", "AOC2024", "AOC2025"]),
         .target(name: "AOC2022", dependencies: ["AOCKit"], resources: [.copy("Inputs")]),
         .target(name: "AOC2023", dependencies: ["AOCKit"], resources: [.copy("Inputs")]),
         .target(name: "AOC2024", dependencies: ["AOCKit"], resources: [.copy("Inputs")]),
+        .target(name: "AOC2025", dependencies: ["AOCKit"], resources: [.copy("Inputs")]),
     ]
 )
