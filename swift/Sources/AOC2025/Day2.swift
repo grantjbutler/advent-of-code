@@ -9,12 +9,7 @@ public enum Day2: Solution {
         
         return ids.filter { value in
             let stringValue = String(value)
-            guard stringValue.count % 2 == 0 else { return false }
-            
-            let firstHalf = stringValue[stringValue.startIndex..<stringValue.index(stringValue.startIndex, offsetBy: stringValue.count / 2)]
-            let secondHalf = stringValue[stringValue.index(stringValue.startIndex, offsetBy: stringValue.count / 2)..<stringValue.endIndex]
-            
-            return firstHalf == secondHalf
+            return isRepeatedString(stringValue, chunk: stringValue.count / 2)
         }
         .sum()
     }
@@ -26,11 +21,7 @@ public enum Day2: Solution {
             let stringValue = String(value)
             
             for chunk in (1..<stringValue.count).reversed() {
-                let (count, remainder) = stringValue.count.quotientAndRemainder(dividingBy: chunk)
-                guard remainder == 0 else { continue }
-                
-                let firstChunk = stringValue[stringValue.startIndex..<stringValue.index(stringValue.startIndex, offsetBy: chunk)]
-                if stringValue == String(repeating: String(firstChunk), count: count) {
+                if isRepeatedString(stringValue, chunk: chunk) {
                     return true
                 }
             }
@@ -38,6 +29,17 @@ public enum Day2: Solution {
             return false
         }
         .sum()
+    }
+    
+    private static func isRepeatedString(_ string: String, chunk: Int) -> Bool {
+        if chunk == 0 { return false }
+        guard string.count > 1 else { return false }
+        
+        let (count, remainder) = string.count.quotientAndRemainder(dividingBy: chunk)
+        guard remainder == 0 else { return false }
+        
+        let firstChunk = string[string.startIndex..<string.index(string.startIndex, offsetBy: chunk)]
+        return string == String(repeating: String(firstChunk), count: count)
     }
 }
 
