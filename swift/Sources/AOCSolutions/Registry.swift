@@ -28,7 +28,9 @@ public enum Registry {
         .init(year: 2024, day: 5): .init(AOC2024.Day5.self),
         .init(year: 2024, day: 6): .init(AOC2024.Day6.self),
         .init(year: 2024, day: 7): .init(AOC2024.Day7.self),
+        
         .init(year: 2025, day: 1): .init(AOC2025.Day1.self),
+        .init(year: 2025, day: 2): .init(AOC2025.Day2.self),
     ]
     private static let inputs: [Int: Bundle] = [
         2022: AOC2022.Resources.bundle,
